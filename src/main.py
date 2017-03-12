@@ -1,4 +1,5 @@
 import utils
+import methods
 
 
 class Body:
@@ -27,6 +28,7 @@ class Body:
     pos : Vector2
     vel : Vector2
     mass : float
+    inv_mass : float
     forces : Vector2
         The forces applied to the Body.
     """
@@ -35,7 +37,29 @@ class Body:
         self.pos = pos0
         self.vel = vel0
         self.mass = mass
+        self.inv_mass = 1 / mass
         self.forces = utils.Vector2()
+
+    def reset_forces(self):
+        self.forces = utils.Vector2()
+
+    def apply_force(self, body):
+        """Applies another body's gravitational force to this body."""
+        r = body.pos - self.pos
+        r3 = abs(r)**3
+        gravity = -(body.mass / r3) * r
+        self.forces += -(self.mass * body.mass / r3) * r
+
+    def integrate(self, dt, method=methods.euler):
+        """
+        m dv/dt = F
+        """
+        at = self.forces * self.inv_mass
+        vt = self.vel
+        xt = self.pos
+        new_vel, new_pos = method(at, vt, xt, dt)
+        self.vel = new_vel
+        self.pos = new_pos
 
 
 class Planet(Body):
@@ -62,5 +86,19 @@ class System:
     def __init__(self, *bodies):
         self.bodies = list(bodies)
 
+    def others(self, somebody):
+        for body in self.bodies:
+            if body != somebody:
+                yield body
+
     def update(self):
-        pass
+        # apply forces
+        for body in self.bodies:
+            for other in self.others(body):
+                body.apply_gravity(other)
+        # integrate laws of motion
+        for body in self.bodies:
+            body.integrate()
+        # reset forces
+        for body in self.bodies:
+            body.reset_forces()
