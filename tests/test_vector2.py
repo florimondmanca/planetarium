@@ -34,23 +34,31 @@ def repeat(times=10):
 class TestVector2(unittest.TestCase):
 
     def test_create_zero_vector(self):
-        v = Vector2()
-        self.assertEqual(v.x, 0)
-        self.assertEqual(v.y, 0)
+        u = Vector2()
+        self.assertEqual(u.x, 0)
+        self.assertEqual(u.y, 0)
 
     def test_create_integer_vector(self):
-        v = Vector2(1, 2)
-        self.assertEqual((v.x, v.y), (1, 2))
+        u = Vector2(1, 2)
+        self.assertEqual((u.x, u.y), (1, 2))
 
     def test_create_float_vector(self):
-        v = Vector2(1.4, 34.2)
-        self.assertEqual((v.x, v.y), (1.4, 34.2))
+        u = Vector2(1.4, 34.2)
+        self.assertEqual((u.x, u.y), (1.4, 34.2))
 
     def test_create_negative_vector(self):
-        v = Vector2(-12, 23)
-        self.assertEqual((v.x, v.y), (-12, 23))
+        u = Vector2(-12, 23)
+        self.assertEqual((u.x, u.y), (-12, 23))
         v = Vector2(0, -23.4)
         self.assertEqual((v.x, v.y), (0, -23.4))
+
+    def test_create_from_pair(self):
+        u = Vector2.from_pair((2, 3))
+        self.assertEqual(u.x, 2)
+        self.assertEqual(u.y, 3)
+        v = Vector2.from_pair(u)
+        self.assertEqual(v.x, 2)
+        self.assertEqual(v.y, 3)
 
     def test_equality_with_other_vector(self):
         u = Vector2(-12, 23)

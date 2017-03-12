@@ -2,8 +2,6 @@ from . import utils
 from . import methods
 from collections import namedtuple, deque
 
-State = namedtuple('State', ['pos', 'vel', 'forces'])
-
 
 class Body:
     """
@@ -35,17 +33,30 @@ class Body:
     forces : Vector2
         The forces applied to the Body.
     """
+    class State:
+
+        def __init__(self, pos, vel, forces):
+            self.pos = pos
+            self.vel = vel
+            self.forces = forces
 
     def __init__(self, name, pos, vel, mass):
         self.name = name
         self.states = deque(maxlen=3)  # remember a few past states
-        self.states.appendleft(State(pos, vel, utils.Vector2()))
+        pos = utils.Vector2.from_pair(pos)
+        vel = utils.Vector2.from_pair(vel)
+        self.states.appendleft(Body.State(pos, vel, utils.Vector2()))
         self.mass = mass
         self.inv_mass = 1 / mass
 
     @property
     def pos(self):
         return self.states[-1].pos
+
+    @pos.setter
+    def pos(self, new_pos):
+        new_pos = utils.Vector2.from_pair(new_pos)
+        self.states[-1].pos = new_pos
 
     @property
     def prev_pos(self):
@@ -55,6 +66,11 @@ class Body:
     def vel(self):
         return self.states[-1].vel
 
+    @vel.setter
+    def vel(self, new_vel):
+        new_vel = utils.Vector2.from_pair(new_vel)
+        self.states[-1].vel = new_vel
+
     @property
     def prev_vel(self):
         return self.states[-2].vel
@@ -63,18 +79,22 @@ class Body:
     def forces(self):
         return self.states[-1].forces
 
+    @forces.setter
+    def forces(self, new_forces):
+        new_forces = utils.Vector2.from_pair(new_forces)
+        self.states[-1].forces = new_forces
+
     @property
     def prev_forces(self):
         return self.states[-2].forces
 
     def new_state(self):
-        self.states.appendleft(State(self.pos, self.vel, utils.Vector2()))
+        self.states.appendleft(Body.State(self.pos, self.vel, utils.Vector2()))
 
-    def apply_gravity(self, body):
+    def apply_gravity_of(self, body):
         """Applies another body's gravitational force to this body."""
         r = body.pos - self.pos
         r3 = abs(r)**3
-        gravity = -(body.mass / r3) * r
         self.forces += -(self.mass * body.mass / r3) * r
 
     def integrate(self, dt, method=methods.euler):

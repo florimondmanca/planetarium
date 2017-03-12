@@ -99,5 +99,13 @@ class Vector2:
         return (self - other) | (self - other)
 
     @staticmethod
-    def from_pair(t):
-        return Vector2(t[0], t[1])
+    def from_pair(pair):
+        if isinstance(pair, Vector2):
+            return Vector2(pair.x, pair.y)
+        return Vector2(pair[0], pair[1])
+
+    def __str__(self):
+        return "<Vector2 {}, {}>".format(self.x, self.y)
+
+    def __repr__(self):
+        return self.__str__()
