@@ -18,6 +18,10 @@ def vector_amplitude(vec):
     return math.sqrt(vec.x ** 2 + vec.y ** 2)
 
 
+def non_vector():
+    return randscalar(), 'hello', True, [2, 3]
+
+
 def repeat(times=10):
     def decorate(test_func):
         def new_test_func(*args, **kwargs):
@@ -73,11 +77,11 @@ class TestVector2(unittest.TestCase):
 
     def test_add_vector_and_non_vector_raises_type_exception(self):
         u = randvec()
-        k = randscalar()
-        with self.assertRaises(TypeError):
-            u + k
-        with self.assertRaises(TypeError):
-            k + u
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u + k
+            with self.assertRaises(TypeError):
+                k + u
 
     @repeat
     def test_subtract_vectors(self):
@@ -97,11 +101,11 @@ class TestVector2(unittest.TestCase):
 
     def test_subtract_vector_and_non_vector_raises_type_exception(self):
         u = randvec()
-        k = randscalar()
-        with self.assertRaises(TypeError):
-            u - k
-        with self.assertRaises(TypeError):
-            k - u
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u - k
+            with self.assertRaises(TypeError):
+                k - u
 
     @repeat
     def test_multiply_by_scalar_left(self):
@@ -135,9 +139,9 @@ class TestVector2(unittest.TestCase):
 
     def test_divide_by_scalar_left_raises_type_exception(self):
         u = randvec()
-        k = randscalar()
-        with self.assertRaises(TypeError):
-            k / u
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                k / u
 
     def test_divide_two_vectors_raises_type_exception(self):
         u = randvec()
@@ -169,11 +173,11 @@ class TestVector2(unittest.TestCase):
 
     def test_dot_vector_and_nonvector_raises_type_exception(self):
         u = randvec()
-        k = randscalar()
-        with self.assertRaises(TypeError):
-            u | k
-        with self.assertRaises(TypeError):
-            k | u
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u | k
+            with self.assertRaises(TypeError):
+                k | u
 
     def test_cross_product(self):
         u = randvec()
@@ -183,11 +187,37 @@ class TestVector2(unittest.TestCase):
 
     def test_cross_vector_and_nonvector_raises_type_exception(self):
         u = randvec()
-        k = randscalar()
-        with self.assertRaises(TypeError):
-            u ^ k
-        with self.assertRaises(TypeError):
-            k ^ u
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u ^ k
+            with self.assertRaises(TypeError):
+                k ^ u
+
+    @repeat
+    def test_distance_between_vectors(self):
+        u = randvec()
+        v = randvec()
+        d = u.dist(v)
+        self.assertEqual(d, abs((u.x - v.x) ** 2 + (u.y - v.y) ** 2))
+
+    def test_distance_vector_and_nonvector_raises_type_exception(self):
+        u = randvec()
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u.dist(k)
+
+    @repeat
+    def test_distance_squared_between_vectors(self):
+        u = randvec()
+        v = randvec()
+        d2 = u.dist2(v)
+        self.assertEqual(d2, (u.x - v.x) ** 2 + (u.y - v.y) ** 2)
+
+    def test_distance2_vector_and_nonvector_raises_type_exception(self):
+        u = randvec()
+        for k in non_vector():
+            with self.assertRaises(TypeError):
+                u.dist2(k)
 
 
 if __name__ == '__main__':

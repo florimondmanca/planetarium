@@ -61,12 +61,6 @@ class Vector2:
             raise TypeError('Division of two Vector2 is undefined.')
         return Vector2(self.x / other, self.y / other)
 
-    def __abs__(self):
-        return np.sqrt(self.x * self.x + self.y * self.y)
-
-    def __bool__(self):
-        return bool(abs(self) > Vector2.EPS)
-
     def __or__(self, other):
         # dot product
         try:
@@ -82,3 +76,15 @@ class Vector2:
         except AttributeError:
             raise TypeError(
                 'Cannot cross non-Vector2 and Vector2: {}'.format(other))
+
+    def __abs__(self):
+        return np.sqrt(self | self)
+
+    def __bool__(self):
+        return bool(abs(self) > Vector2.EPS)
+
+    def dist(self, other):
+        return abs(self - other)
+
+    def dist2(self, other):
+        return (self - other) | (self - other)
