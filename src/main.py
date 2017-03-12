@@ -37,7 +37,7 @@ class Body:
     """
 
     def __init__(self, pos0, vel0, mass):
-        self.states = deque(maxlen=3)
+        self.states = deque(maxlen=3)  # remember a few past states
         self.states.appendleft(State(pos0, vel0, utils.Vector2()))
         self.mass = mass
         self.inv_mass = 1 / mass
