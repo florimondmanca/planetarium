@@ -12,6 +12,10 @@ def euler(at, vt, xt, dt):
     return vtpdt, xtpdt
 
 
+def verlet(at, vt, xt, dt):
+    pass
+
+
 def spring_test(method=euler):
     # test with a spring: F = -kx
     # parameters

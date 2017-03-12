@@ -1,5 +1,8 @@
 import utils
 import methods
+from collections import namedtuple
+
+State = namedtuple('State', ['pos', 'vel'])
 
 
 class Body:
