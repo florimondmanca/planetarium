@@ -110,9 +110,10 @@ class Body:
                 return False
             if self.vel != other.vel:
                 return False
-            return True
         except AttributeError:
             return False
+        else:
+            return True
 
     def __str__(self):
         return self.name

@@ -30,6 +30,24 @@ class TestBody(unittest.TestCase):
         self.assertEqual(planet.vel, (7, 8))
         self.assertEqual(planet.prev_vel, (3, 4))
 
+    def test_equality_between_bodies(self):
+        p1 = bodydefs.Planet('Earth', (0, 0), (0, 0), 1)
+        p2 = bodydefs.Planet('Jupiter', (0, 0), (0, 0), 1)
+        self.assertNotEqual(p1, p2)
+        p3 = bodydefs.Planet('Earth', (0, 1), (0, 0), 1)
+        self.assertNotEqual(p1, p3)
+        p4 = bodydefs.Planet('Earth', (0, 0), (0, 1), 1)
+        self.assertNotEqual(p1, p4)
+        p5 = bodydefs.Planet('Earth', (0, 0), (0, 0), 20)
+        self.assertNotEqual(p1, p5)
+        same = bodydefs.Planet('Earth', (0, 0), (0, 0), 1)
+        self.assertEqual(p1, same)
+
+    def test_not_equal_with_nonbody(self):
+        planet = bodydefs.Planet('Earth', (0, 0), (0, 0), 1)
+        for other in (1, 'hello', (4, 2), True):
+            self.assertNotEqual(planet, other)
+
     def test_apply_gravity(self):
         earth = bodydefs.Planet('Earth', (0, 0), (0, 0), 1)
         moon = bodydefs.Planet('Moon', (-3, 2), (4, 1), .1)
