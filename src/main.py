@@ -86,6 +86,13 @@ class System:
     def __init__(self, *bodies):
         self.bodies = list(bodies)
 
+    @staticmethod
+    def load(planetfile):
+        """
+        Loads a System defined in a .planet file.
+        """
+        pass
+
     def others(self, somebody):
         for body in self.bodies:
             if body != somebody:
