@@ -1,4 +1,5 @@
-import bodydef
+from . import bodydefs
+from ast import literal_eval as make_tuple
 
 
 class Loader:
@@ -6,24 +7,36 @@ class Loader:
         'int': int,
         'str': str,
         'float': float,
-        'tuple': tuple,
+        'tuple': make_tuple,
     }
+
+    def readfile(planetfilename):
+        lines = []
+        with open(planetfilename) as f:
+            for line in f:
+                lines.append(line.strip())
+        lines.reverse()  # make it a FIFO queue
+        return lines
 
     def load(planetfilename):
         bodies = []
-        with open(planetfilename) as f:
-            header = f.readline().strip()
+        lines = Loader.readfile(planetfilename)
+        while lines:
+            header = lines.pop()
             body_type = header.capitalize()
             with Creator.get(body_type)(bodies) as creator:
                 line = header
                 while line != "END":
-                    line = f.readline().strip()
+                    line = lines.pop()
                     arg_name, value = Loader.parse_args(line)
                     creator.set(arg_name, value)
         return bodies
 
     def parse_args(line):
         arg_name, arg_type, value = line.split(':')
+        arg_name = arg_name.strip()
+        arg_type = arg_type.strip()
+        value = value.strip()
         value = Loader.known_types[arg_type](value)
         return arg_name, value
 
@@ -35,8 +48,8 @@ class Creator:
         self.bodies = bodies
         self.args = {
             'name': None,
-            'pos0': None,
-            'vel0': None,
+            'pos': None,
+            'vel': None,
             'mass': None,
         }
 
@@ -46,18 +59,18 @@ class Creator:
     def set(self, arg_name, value):
         self.args[arg_name] = value
 
-    def __exit__(self):
+    def __exit__(self, *args):
         if any(value is None for value in self.args.values()):
             missing = (arg for arg in self.args if self.args[arg] is None)
             message = self.body_cls.__name__
-            message += ' misses the followinf arguments: '
+            message += ' misses the following arguments: '
             message += ' '.join(missing)
             raise ImportError(message)
         self.bodies.append(self.body_cls(*self.args))
 
 
 class PlanetCreator(Creator):
-    body_cls = bodydef.Planet
+    body_cls = bodydefs.Planet
 
 
 def get_creator(body_type):
