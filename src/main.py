@@ -1,3 +1,4 @@
+<< << << < HEAD
 import utils
 import methods
 from collections import namedtuple, deque
@@ -104,13 +105,6 @@ class System:
 
     def __init__(self, *bodies):
         self.bodies = list(bodies)
-
-    @staticmethod
-    def load(planetfile):
-        """
-        Loads a System defined in a .planet file.
-        """
-        pass
 
     def new_state(self):
         for body in self.bodies:

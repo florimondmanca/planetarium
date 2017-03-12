@@ -52,6 +52,21 @@ class TestVector2(unittest.TestCase):
         v = Vector2(0, -23.4)
         self.assertEqual((v.x, v.y), (0, -23.4))
 
+    def test_equality_with_other_vector(self):
+        u = Vector2(-12, 23)
+        v = Vector2(-12, 23)
+        self.assertEqual(u, v)
+
+    def test_equality_with_iterable(self):
+        u = Vector2(-12, 23)
+        self.assertEqual(u, (-12, 23))
+        self.assertEqual(u, [-12, 23])
+
+    def test_equality_with_nonvector_and_noniterable_returns_false(self):
+        u = randvec()
+        self.assertNotEqual(u, 'hello')
+        self.assertNotEqual(u, 12)
+
     @repeat
     def test_negate_vector(self):
         u = randvec()

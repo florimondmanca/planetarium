@@ -29,6 +29,15 @@ class Vector2:
     # Arithematical operations: +, -, *, /
     #
 
+    def __eq__(self, other):
+        try:
+            return self.x == other.x and self.y == other.y
+        except AttributeError:
+            try:
+                return self.x == other[0] and self.y == other[1]
+            except TypeError:
+                return False
+
     def __add__(self, other):
         try:
             return Vector2(self.x + other.x, self.y + other.y)
@@ -88,3 +97,7 @@ class Vector2:
 
     def dist2(self, other):
         return (self - other) | (self - other)
+
+    @staticmethod
+    def from_pair(t):
+        return Vector2(t[0], t[1])
