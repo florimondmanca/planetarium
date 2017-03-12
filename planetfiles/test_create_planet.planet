@@ -1,6 +1,0 @@
-PLANET
-    name: str: Sun
-    pos: tuple: (0, 0)
-    vel: tuple: (0, 0)
-    mass: float: 1
-END

@@ -1,44 +1,59 @@
 from . import bodydefs
 from ast import literal_eval as make_tuple
 
+ARG_TYPES = {
+    'pos': make_tuple,
+    'vel': make_tuple,
+    'name': str,
+    'mass': float,
+}
 
-class Loader:
-    known_types = {
-        'int': int,
-        'str': str,
-        'float': float,
-        'tuple': make_tuple,
-    }
 
-    def readfile(planetfilename):
-        lines = []
-        with open(planetfilename) as f:
-            for line in f:
-                lines.append(line.strip())
-        lines.reverse()  # make it a FIFO queue
-        return lines
+def readfile(planetfilename):
+    lines = []
+    with open(planetfilename) as f:
+        for line in f:
+            lines.append(line.strip())
+    lines.reverse()  # make it a FIFO queue
+    return lines
 
-    def load(planetfilename):
-        bodies = []
-        lines = Loader.readfile(planetfilename)
-        while lines:
-            header = lines.pop()
-            body_type = header.capitalize()
-            with Creator.get(body_type)(bodies) as creator:
-                line = header
-                while line != "END":
-                    line = lines.pop()
-                    arg_name, value = Loader.parse_args(line)
-                    creator.set(arg_name, value)
-        return bodies
 
-    def parse_args(line):
-        arg_name, arg_type, value = line.split(':')
-        arg_name = arg_name.strip()
-        arg_type = arg_type.strip()
-        value = value.strip()
-        value = Loader.known_types[arg_type](value)
-        return arg_name, value
+def get_next_line(lines):
+    line = lines.pop()
+    while not line:
+        if len(lines) == 0:
+            return "END"
+        line = lines.pop()
+    return line
+
+
+def load(planetfilename):
+    bodies = []
+    lines = readfile(planetfilename)
+    while lines:
+        header = get_next_line(lines)
+        body_type = header.capitalize()
+        with Creator.get(body_type)(bodies) as creator:
+            line = get_next_line(lines)
+            while line != "END":
+                arg_name, value = parse_args(line)
+                creator.set(arg_name, value)
+                line = get_next_line(lines)
+    return bodies
+
+
+def parse_args(line):
+    try:
+        arg_name, value = line.split(':')
+    except ValueError:
+        raise ValueError('Could not parse line {}'.format(line))
+    arg_name = arg_name.strip()
+    value = value.strip()
+    try:
+        arg_type = ARG_TYPES[arg_name]
+    except KeyError:
+        raise KeyError('Unknown parameter for body creation ' + arg_name)
+    return arg_name, arg_type(value)
 
 
 class Creator:
