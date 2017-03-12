@@ -15,22 +15,35 @@ def euler_raw(at, vt, xt, dt):
     return vtpdt, xtpdt
 
 
-def euler(body, dt):
-    return euler_raw(
-        body.forces * body.inv_mass,
-        body.vel,
-        body.pos,
-        dt,
-    )
+def body_euler(body, dt):
+    at = body.forces * body.inv_mass
+    xt = body.pos
+    vt = body.vel
+    return euler_raw(at, vt, xt, dt)
 
 
-def verlet_raw():
-    # basic Verlet
-    pass
+def euler(system, dt):
+    system.integrate(body_method=body_euler)
 
 
-def verlet(body, dt):
-    pass
+def body_verlet_pos(body, dt):
+    xt = body.pos
+    vt = body.vel
+    at = body.forces * body.inv_mass
+    return vt, xt + vt * dt + 1 / 2 * at * dt**2
+
+
+def body_verlet_vel(body, dt):
+    vt = body.vel
+    at = body.prev_forces * body.inv_mass
+    atpdt = body.forces * body.inv_mass
+    return vt + (at + atpdt) / 2 * dt, body.pos
+
+
+def verlet(system, dt):
+    system.integrate(body_method=body_verlet_pos)
+    system.new_state()
+    system.integrate(body_method=body_verlet_vel)
 
 
 def spring_test(method=euler_raw):

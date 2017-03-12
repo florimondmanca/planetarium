@@ -2,7 +2,7 @@ import utils
 import methods
 from collections import namedtuple, deque
 
-State = namedtuple('State', ['pos', 'vel'])
+State = namedtuple('State', ['pos', 'vel', 'forces'])
 
 
 class Body:
@@ -38,10 +38,9 @@ class Body:
 
     def __init__(self, pos0, vel0, mass):
         self.states = deque(maxlen=3)
-        self.states.appendleft(State(pos0, vel0))
+        self.states.appendleft(State(pos0, vel0, utils.Vector2()))
         self.mass = mass
         self.inv_mass = 1 / mass
-        self.forces = utils.Vector2()
 
     @property
     def pos(self):
@@ -55,10 +54,18 @@ class Body:
     def vel(self):
         return self.states[-1].vel
 
-    def reset_forces(self):
-        self.forces = utils.Vector2()
+    @property
+    def forces(self):
+        return self.states[-1].forces
 
-    def apply_force(self, body):
+    @property
+    def prev_forces(self):
+        return self.states[-2].forces
+
+    def new_state(self):
+        self.states.appendleft(State(self.pos, self.vel, utils.Vector2()))
+
+    def apply_gravity(self, body):
         """Applies another body's gravitational force to this body."""
         r = body.pos - self.pos
         r3 = abs(r)**3
@@ -66,9 +73,7 @@ class Body:
         self.forces += -(self.mass * body.mass / r3) * r
 
     def integrate(self, dt, method=methods.euler):
-        new_vel, new_pos = method(self, dt)
-        self.vel = new_vel
-        self.pos = new_pos
+        self.vel, self.pos = method(self, dt)
 
 
 class Planet(Body):
@@ -103,16 +108,25 @@ class System:
         """
         pass
 
+    def new_state(self):
+        for body in self.bodies:
+            body.new_state()
+
+    def apply_gravity(self):
+        for body in self.bodies:
+            for other in self.others(body):
+                body.apply_gravity(other)
+
     def others(self, somebody):
         for body in self.bodies:
             if body != somebody:
                 yield body
 
-    def update(self):
-        # apply forces
+    def integrate(self, body_method):
         for body in self.bodies:
-            for other in self.others(body):
-                body.apply_gravity(other)
-        # integrate laws of motion
-        for body in self.bodies:
-            body.integrate(System.dt)
+            body.integrate(System.dt, method=body_method)
+
+    def update(self, system_method):
+        self.apply_gravity()
+        method(system, dt)
+        system.new_state()
