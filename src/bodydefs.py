@@ -65,6 +65,20 @@ class Body:
         self.vel = new_vel
         self.pos = new_pos
 
+    def __eq__(self, other):
+        try:
+            if self.name != other.name:
+                return False
+            if self.mass != other.mass:
+                return False
+            if self.pos != other.pos:
+                return False
+            if self.vel != other.vel:
+                return False
+            return True
+        except AttributeError:
+            return False
+
     def __str__(self):
         return self.name
 
