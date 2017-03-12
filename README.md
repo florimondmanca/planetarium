@@ -1,6 +1,6 @@
 # Planetarium
 
-Planetarium is a astromechanical engine to create and simulate systems of planets and stars.
+Planetarium is a 2D astromechanical engine to create and simulate systems of planets and stars.
 
 The simulations can be visualized in a pygame GUI.
 
