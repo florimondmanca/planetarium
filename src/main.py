@@ -55,6 +55,10 @@ class Body:
         return self.states[-1].vel
 
     @property
+    def prev_vel(self):
+        return self.states[-2].vel
+
+    @property
     def forces(self):
         return self.states[-1].forces
 
@@ -117,9 +121,9 @@ class System:
             for other in self.others(body):
                 body.apply_gravity(other)
 
-    def others(self, somebody):
+    def others(self, current_body):
         for body in self.bodies:
-            if body != somebody:
+            if body != current_body:
                 yield body
 
     def integrate(self, body_method):
