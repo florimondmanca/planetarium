@@ -1,8 +1,8 @@
 from . import utils
 from . import methods
-from collections import namedtuple
+from collections import namedtuple, deque
 
-State = namedtuple('State', ['pos', 'vel'])
+State = namedtuple('State', ['pos', 'vel', 'forces'])
 
 
 class Body:
@@ -38,16 +38,39 @@ class Body:
 
     def __init__(self, name, pos, vel, mass):
         self.name = name
-        self.pos = utils.Vector2.from_pair(pos)
-        self.vel = utils.Vector2.from_pair(vel)
+        self.states = deque(maxlen=3)  # remember a few past states
+        self.states.appendleft(State(pos, vel, utils.Vector2()))
         self.mass = mass
         self.inv_mass = 1 / mass
-        self.forces = utils.Vector2()
 
-    def reset_forces(self):
-        self.forces = utils.Vector2()
+    @property
+    def pos(self):
+        return self.states[-1].pos
 
-    def apply_force(self, body):
+    @property
+    def prev_pos(self):
+        return self.states[-2].pos
+
+    @property
+    def vel(self):
+        return self.states[-1].vel
+
+    @property
+    def prev_vel(self):
+        return self.states[-2].vel
+
+    @property
+    def forces(self):
+        return self.states[-1].forces
+
+    @property
+    def prev_forces(self):
+        return self.states[-2].forces
+
+    def new_state(self):
+        self.states.appendleft(State(self.pos, self.vel, utils.Vector2()))
+
+    def apply_gravity(self, body):
         """Applies another body's gravitational force to this body."""
         r = body.pos - self.pos
         r3 = abs(r)**3
@@ -55,15 +78,7 @@ class Body:
         self.forces += -(self.mass * body.mass / r3) * r
 
     def integrate(self, dt, method=methods.euler):
-        """
-        m dv/dt = F
-        """
-        at = self.forces * self.inv_mass
-        vt = self.vel
-        xt = self.pos
-        new_vel, new_pos = method(at, vt, xt, dt)
-        self.vel = new_vel
-        self.pos = new_pos
+        self.vel, self.pos = method(self, dt)
 
     def __eq__(self, other):
         try:
