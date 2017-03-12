@@ -31,28 +31,25 @@ class Lines:
 
     def __next__(self):
         if not self.lines:
-            return "END"
+            raise StopIteration
         else:
             line = self.lines.pop()
+            if line == "END":
+                raise StopIteration
             while not line:
-                if not self.lines:
-                    return "END"
-                line = self.lines.pop()
+                line = next(self)
             return line
 
 
 def load(planetfilename):
     bodies = []
     lines = readfile(planetfilename)
-    while lines:
-        header = next(lines)
+    for header in lines:
         body_type = header.capitalize()
         with Creator.get(body_type)(bodies) as creator:
-            line = next(lines)
-            while line != "END":
+            for line in lines:
                 arg_name, value = parse_args(line)
                 creator.set(arg_name, value)
-                line = next(lines)
     return bodies
 
 
