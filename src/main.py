@@ -5,13 +5,13 @@ class Body:
     """
     Represents a celestial body.
     Distances must be given in AU
-        1 AU = 149,597,870,700 m
+        1 AU = 149,597,870.700 m
     Time is measured in years
         1 yr = 31,557,600 s
     Mass is measured in solar masses, Ms
         1 Ms = 4π2 AU^3/yr^3/G ≈ 1.99e30 kg
-    Force is measured in F0 (arbitrary unit)
-        1 F0 = G Ms^2 / UA^2 ≈ 2.99e26 N
+    Force is measured in F (arbitrary unit)
+        1 F = G Ms^2 / AU^2 ≈ 2.989e23 N
 
     Parameters
     ----------
