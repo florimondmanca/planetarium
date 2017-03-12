@@ -15,30 +15,44 @@ def readfile(planetfilename):
         for line in f:
             lines.append(line.strip())
     lines.reverse()  # make it a FIFO queue
-    return lines
+    return Lines(lines)
 
 
-def get_next_line(lines):
-    line = lines.pop()
-    while not line:
-        if len(lines) == 0:
+class Lines:
+
+    def __init__(self, lines):
+        self.lines = lines
+
+    def __iter__(self):
+        return self
+
+    def __len__(self):
+        return len(self.lines)
+
+    def __next__(self):
+        if not self.lines:
             return "END"
-        line = lines.pop()
-    return line
+        else:
+            line = self.lines.pop()
+            while not line:
+                if not self.lines:
+                    return "END"
+                line = self.lines.pop()
+            return line
 
 
 def load(planetfilename):
     bodies = []
     lines = readfile(planetfilename)
     while lines:
-        header = get_next_line(lines)
+        header = next(lines)
         body_type = header.capitalize()
         with Creator.get(body_type)(bodies) as creator:
-            line = get_next_line(lines)
+            line = next(lines)
             while line != "END":
                 arg_name, value = parse_args(line)
                 creator.set(arg_name, value)
-                line = get_next_line(lines)
+                line = next(lines)
     return bodies
 
 
