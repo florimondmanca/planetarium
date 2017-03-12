@@ -10,18 +10,6 @@ class TestLoader(unittest.TestCase):
         lines = loader.readfile('planetfiles/test_readfile.planet')
         self.assertEqual(len(lines), 6)
 
-    def test_missing_end_raises_exception(self):
-        lines = loader.Lines([
-            "PLANET",
-            "name: Sun",
-            "pos: (0, 2)",
-            "vel: (0, 3)",
-            "mass: 1",
-            "PLANET",
-        ])
-        with self.assertRaises(ValueError):
-            loader.load_from_lines_object(lines)
-
     def test_get_creator(self):
         type_to_class = {
             'Planet': loader.PlanetCreator,
@@ -64,6 +52,33 @@ class TestLoader(unittest.TestCase):
         for line, exp_arg_name, exp_value in data:
             with self.assertRaises(KeyError):
                 loader.parse_args(line)
+
+    def test_parse_mistyped_arg_declaration_raises_exception(self):
+        data = [
+            ('pos, 34', 'pos', 34),
+            ('name=Sun', 'name', 'Sun'),
+            ('vel (3, 4.5)', 'vel', (3, 4.5)),
+            ('mass -> 1.43', 'mass', 1.43),
+        ]
+        for line, exp_arg_name, exp_value in data:
+            with self.assertRaises(ValueError) as cm:
+                loader.parse_args(line)
+            self.assertIn("mistyped", str(cm.exception),
+                          "insufficient exception cause information")
+
+    def test_parse_and_missing_end_raises_exception(self):
+        lines = loader.Lines([
+            "PLANET",
+            "name: Sun",
+            "pos: (0, 2)",
+            "vel: (0, 3)",
+            "mass: 1",
+            "PLANET",
+        ])
+        with self.assertRaises(ValueError) as cm:
+            loader.load_from_lines_object(lines)
+        self.assertIn("END statement", str(cm.exception),
+                      "insufficient exception cause information")
 
     def test_load_one_planet(self):
         bodies = loader.load('planetfiles/test_create_one_planet.planet')

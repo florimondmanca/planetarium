@@ -61,8 +61,13 @@ def parse_args(line):
     try:
         arg_name, value = line.split(':')
     except ValueError:
+        info = ''
+        if line in ('PLANET',):
+            info += ' (a closing END statement may be missing)'
+        else:
+            info += ' (an argument declaration is probably mistyped)'
         raise ValueError('Could not parse line "{}"'.format(line) +
-                         ' (did you forget a closing END statement?)')
+                         info)
     arg_name = arg_name.strip()
     value = value.strip()
     try:
