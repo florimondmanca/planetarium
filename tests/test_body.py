@@ -12,6 +12,14 @@ class TestBody(unittest.TestCase):
         self.assertEqual(planet.vel, (3, 4))
         self.assertEqual(planet.mass, 1)
 
+    def test_str(self):
+        planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
+        self.assertEqual(str(planet), 'Sun')
+
+    def test_repr(self):
+        planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
+        self.assertEqual(repr(planet), '<Planet: Sun>')
+
     def test_create_new_state(self):
         planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
         self.assertEqual(len(planet.states), 1)
