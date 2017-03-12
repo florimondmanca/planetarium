@@ -42,12 +42,16 @@ class Lines:
 
 
 def load(planetfilename):
-    bodies = []
     lines = readfile(planetfilename)
-    for header in lines:
+    return load_from_lines_object(lines)
+
+
+def load_from_lines_object(lines):
+    bodies = []
+    for header in lines:  # will stop when finding an 'END' header or EOF
         body_type = header.capitalize()
-        with Creator.get(body_type)(bodies) as creator:
-            for line in lines:
+        with get_creator(body_type)(bodies) as creator:
+            for line in lines:  # will stop when finding the next 'END'
                 arg_name, value = parse_args(line)
                 creator.set(arg_name, value)
     return bodies
@@ -57,13 +61,14 @@ def parse_args(line):
     try:
         arg_name, value = line.split(':')
     except ValueError:
-        raise ValueError('Could not parse line {}'.format(line))
+        raise ValueError('Could not parse line "{}"'.format(line) +
+                         ' (did you forget a closing END statement?)')
     arg_name = arg_name.strip()
     value = value.strip()
     try:
         arg_type = ARG_TYPES[arg_name]
     except KeyError:
-        raise KeyError('Unknown parameter for body creation ' + arg_name)
+        raise KeyError('Unknown argument for body creation ' + str(arg_name))
     return arg_name, arg_type(value)
 
 
@@ -103,7 +108,7 @@ def get_creator(body_type):
     type_to_class = {
         'Planet': PlanetCreator,
     }
-    return type_to_class[body_type]
-
-
-Creator.get = get_creator
+    try:
+        return type_to_class[body_type]
+    except KeyError:
+        raise KeyError('Unknown creator type: ' + str(body_type))

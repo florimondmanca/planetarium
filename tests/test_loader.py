@@ -10,6 +10,18 @@ class TestLoader(unittest.TestCase):
         lines = loader.readfile('planetfiles/test_readfile.planet')
         self.assertEqual(len(lines), 6)
 
+    def test_missing_end_raises_exception(self):
+        lines = loader.Lines([
+            "PLANET",
+            "name: Sun",
+            "pos: (0, 2)",
+            "vel: (0, 3)",
+            "mass: 1",
+            "PLANET",
+        ])
+        with self.assertRaises(ValueError):
+            loader.load_from_lines_object(lines)
+
     def test_get_creator(self):
         type_to_class = {
             'Planet': loader.PlanetCreator,
@@ -18,7 +30,7 @@ class TestLoader(unittest.TestCase):
             creator = loader.get_creator(bodytype)
             self.assertEqual(creator, type_to_class[bodytype])
 
-    def test_creator_set(self):
+    def test_creator_set_method(self):
         bodies = []
         with loader.PlanetCreator(bodies) as creator:
             creator.set('pos', (1, 2))
@@ -40,6 +52,18 @@ class TestLoader(unittest.TestCase):
             arg_name, value = loader.parse_args(line)
             self.assertEqual(arg_name, exp_arg_name)
             self.assertEqual(value, exp_value)
+
+    def test_parse_invalid_args_raises_exception(self):
+        data = [
+            ('posa: 34', 'pos', 34),
+            ('namex: Sun', 'name', 'Sun'),
+            ('vel0: (3, 4.5)', 'vel', (3, 4.5)),
+            ('haha: (-2.3, 1.2)', 'vel', (-2.3, 1.2)),
+            ('mass1: 1.43', 'mass', 1.43),
+        ]
+        for line, exp_arg_name, exp_value in data:
+            with self.assertRaises(KeyError):
+                loader.parse_args(line)
 
     def test_load_one_planet(self):
         bodies = loader.load('planetfiles/test_create_one_planet.planet')
