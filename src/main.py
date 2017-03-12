@@ -36,7 +36,8 @@ class Body:
         The forces applied to the Body.
     """
 
-    def __init__(self, pos0, vel0, mass):
+    def __init__(self, name, pos0, vel0, mass):
+        self.name = name
         self.pos = pos0
         self.vel = vel0
         self.mass = mass
@@ -63,6 +64,12 @@ class Body:
         new_vel, new_pos = method(at, vt, xt, dt)
         self.vel = new_vel
         self.pos = new_pos
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Planet(Body):
