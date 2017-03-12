@@ -41,11 +41,11 @@ class TestLoader(unittest.TestCase):
             self.assertEqual(arg_name, exp_arg_name)
             self.assertEqual(value, exp_value)
 
-    def test_create_planet(self):
-        lines = ld.Loader.readfile('planetfiles/test_create_planet.planet')
-        bodies = []
-        with ld.get_creator('Planet')(bodies):
-            line = ""
-            while line != "END":
-                line = lines.pop()
-                arg_name, value = ld.Loader.parse_args(line)
+    # def test_create_planet(self):
+    #     lines = ld.Loader.readfile('planetfiles/test_create_planet.planet')
+    #     bodies = []
+    #     with ld.get_creator('Planet')(bodies):
+    #         line = ""
+    #         while line != "END":
+    #             line = lines.pop()
+    #             arg_name, value = ld.Loader.parse_args(line)

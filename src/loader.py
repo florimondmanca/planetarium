@@ -66,7 +66,7 @@ class Creator:
             message += ' misses the following arguments: '
             message += ' '.join(missing)
             raise ImportError(message)
-        self.bodies.append(self.body_cls(*self.args))
+        self.bodies.append(self.body_cls(**self.args))
 
 
 class PlanetCreator(Creator):

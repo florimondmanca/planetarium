@@ -36,10 +36,10 @@ class Body:
         The forces applied to the Body.
     """
 
-    def __init__(self, name, pos0, vel0, mass):
+    def __init__(self, name, pos, vel, mass):
         self.name = name
-        self.pos = utils.Vector2.from_pair(pos0)
-        self.vel = utils.Vector2.from_pair(vel0)
+        self.pos = utils.Vector2.from_pair(pos)
+        self.vel = utils.Vector2.from_pair(vel)
         self.mass = mass
         self.inv_mass = 1 / mass
         self.forces = utils.Vector2()
