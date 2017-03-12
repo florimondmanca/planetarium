@@ -38,8 +38,8 @@ class Body:
 
     def __init__(self, name, pos0, vel0, mass):
         self.name = name
-        self.pos = utils.Vector2(*pos0)
-        self.vel = utils.Vector2(*vel0)
+        self.pos = utils.Vector2.from_pair(pos0)
+        self.vel = utils.Vector2.from_pair(vel0)
         self.mass = mass
         self.inv_mass = 1 / mass
         self.forces = utils.Vector2()

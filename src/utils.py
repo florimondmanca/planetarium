@@ -97,3 +97,7 @@ class Vector2:
 
     def dist2(self, other):
         return (self - other) | (self - other)
+
+    @staticmethod
+    def from_pair(t):
+        return Vector2(t[0], t[1])
