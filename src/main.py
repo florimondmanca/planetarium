@@ -90,11 +90,12 @@ class System:
         self.bodies = list(bodies)
 
     @staticmethod
-    def load(planetfile):
+    def load(planetfilename):
         """
         Loads a System defined in a .planet file.
         """
-        pass
+        with open(planetfilename) as f:
+            pass
 
     def others(self, somebody):
         for body in self.bodies:
