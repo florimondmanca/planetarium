@@ -5,21 +5,21 @@ from collections import namedtuple, deque
 
 class Body:
     """
-    Represents a celestial body.
-    Distances must be given in AU
+    Represents a celestial body.:
+    Distance is measured in AU
         1 AU = 149,597,870.700 m
-    Time is measured in years
+    Time is measured in years:
         1 yr = 31,557,600 s
-    Mass is measured in solar masses, Ms
+    Mass is measured in solar masses, Ms:
         1 Ms = 4π2 AU^3/yr^3/G ≈ 1.99e30 kg
-    Force is measured in F (arbitrary unit)
+    Force is measured in F (arbitrary unit):
         1 F = G Ms^2 / AU^2 ≈ 2.989e23 N
 
     Parameters
     ----------
-    pos0 : Vector2
+    pos : Vector2
         Initial position (in AU)
-    vel0 : Vector2
+    vel : Vector2
         Initial velocity (in AU/yr)
     mass : float
         Mass (in solar masses)
@@ -27,13 +27,19 @@ class Body:
     Attributes
     ----------
     pos : Vector2
+    prev_pos : Vector2
     vel : Vector2
+    prev_vel : Vector2
+    forces : Vector2
+    prev_forces : Vector2
     mass : float
     inv_mass : float
-    forces : Vector2
-        The forces applied to the Body.
     """
     class State:
+        """
+        Gathers the information about the state of the
+        body at a given time.
+        """
 
         def __init__(self, pos, vel, forces):
             self.pos = pos
