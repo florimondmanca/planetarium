@@ -30,13 +30,18 @@ class Vector2:
     #
 
     def __add__(self, other):
-        return Vector2(self.x + other.x, self.y + other.y)
-
-    def __iadd__(self, other):
-        self = self.__add__(other)
+        try:
+            return Vector2(self.x + other.x, self.y + other.y)
+        except AttributeError:
+            raise TypeError(
+                'Cannot add non-Vector2 to Vector2: {}'.format(other))
 
     def __sub__(self, other):
-        return Vector2(self.x - other.x, self.y - other.y)
+        try:
+            return Vector2(self.x - other.x, self.y - other.y)
+        except AttributeError:
+            raise TypeError(
+                'Cannot subtract non-Vector2 from Vector2: {}'.format(other))
 
     def __neg__(self):
         return Vector2(-self.x, -self.y)
@@ -48,21 +53,32 @@ class Vector2:
                             'For cross product, use: x ^ y ')
         return Vector2(self.x * other, self.y * other)
 
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
     def __truediv__(self, other):
         if isinstance(other, Vector2):
-            raise TypeError('Cannot divide two Vector2.')
+            raise TypeError('Division of two Vector2 is undefined.')
         return Vector2(self.x / other, self.y / other)
 
     def __abs__(self):
-        return np.sqrt(self._data**2)
+        return np.sqrt(self.x * self.x + self.y * self.y)
 
     def __bool__(self):
-        return len(self) < Vector2.EPS
+        return bool(abs(self) > Vector2.EPS)
 
     def __or__(self, other):
         # dot product
-        return self.x * other.x + self.y * other.y
+        try:
+            return self.x * other.x + self.y * other.y
+        except AttributeError:
+            raise TypeError(
+                'Cannot dot non-Vector2 and Vector2: {}'.format(other))
 
     def __xor__(self, other):
         # cross product
-        return self.x * other.y - self.y * other.x
+        try:
+            return self.x * other.y - self.y * other.x
+        except AttributeError:
+            raise TypeError(
+                'Cannot cross non-Vector2 and Vector2: {}'.format(other))
