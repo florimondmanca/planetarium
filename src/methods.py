@@ -1,22 +1,39 @@
 """
 Integration methods
+-------------------
+An integration method is a function f defined as follows:
+f: (body, dt) --> (new_vel, new_pos)
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def euler(at, vt, xt, dt):
+def euler_raw(at, vt, xt, dt):
     vtpdt = vt + at * dt
     xtpdt = xt + vt * dt
     return vtpdt, xtpdt
 
 
-def verlet(at, vt, xt, dt):
+def euler(body, dt):
+    return euler_raw(
+        body.forces * body.inv_mass,
+        body.vel,
+        body.pos,
+        dt,
+    )
+
+
+def verlet_raw():
+    # basic Verlet
     pass
 
 
-def spring_test(method=euler):
+def verlet(body, dt):
+    pass
+
+
+def spring_test(method=euler_raw):
     # test with a spring: F = -kx
     # parameters
     x0, v0 = 0, 1
@@ -48,4 +65,4 @@ def spring_test(method=euler):
 
 
 if __name__ == '__main__':
-    spring_test(method=euler)
+    spring_test(method=euler_raw)

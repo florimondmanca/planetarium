@@ -1,6 +1,6 @@
 import utils
 import methods
-from collections import namedtuple
+from collections import namedtuple, deque
 
 State = namedtuple('State', ['pos', 'vel'])
 
@@ -37,11 +37,23 @@ class Body:
     """
 
     def __init__(self, pos0, vel0, mass):
-        self.pos = pos0
-        self.vel = vel0
+        self.states = deque(maxlen=3)
+        self.states.appendleft(State(pos0, vel0))
         self.mass = mass
         self.inv_mass = 1 / mass
         self.forces = utils.Vector2()
+
+    @property
+    def pos(self):
+        return self.states[-1].pos
+
+    @property
+    def prev_pos(self):
+        return self.states[-2].pos
+
+    @property
+    def vel(self):
+        return self.states[-1].vel
 
     def reset_forces(self):
         self.forces = utils.Vector2()
@@ -54,13 +66,7 @@ class Body:
         self.forces += -(self.mass * body.mass / r3) * r
 
     def integrate(self, dt, method=methods.euler):
-        """
-        m dv/dt = F
-        """
-        at = self.forces * self.inv_mass
-        vt = self.vel
-        xt = self.pos
-        new_vel, new_pos = method(at, vt, xt, dt)
+        new_vel, new_pos = method(self, dt)
         self.vel = new_vel
         self.pos = new_pos
 
@@ -85,6 +91,7 @@ class System:
     ----------
     bodies : list of Body
     """
+    dt = 1e-3
 
     def __init__(self, *bodies):
         self.bodies = list(bodies)
@@ -108,7 +115,4 @@ class System:
                 body.apply_gravity(other)
         # integrate laws of motion
         for body in self.bodies:
-            body.integrate()
-        # reset forces
-        for body in self.bodies:
-            body.reset_forces()
+            body.integrate(System.dt)
