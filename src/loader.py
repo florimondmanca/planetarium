@@ -34,9 +34,9 @@ class Lines:
 
     and the following code snippet:
 
-    for line in lines:  # print line (A) at first iteration, (B) at second
+    for line in lines:  # prints line (A) at first iteration, (B) at second
         print(line)
-        for inner in lines:  # print (1) at first iteration, (2) at second
+        for inner in lines:  # prints (1) at first iteration, (2) at second
             print(inner)
 
     """
