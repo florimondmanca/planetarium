@@ -130,6 +130,8 @@ def load(planetfilename):
     return load_from_lines_object(lines)
 
 
+# TODO: move all this to another module
+
 class Creator:
     """
     A Creator is a context manager.
