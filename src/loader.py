@@ -62,7 +62,7 @@ def parse_args(line):
         arg_name, value = line.split(':')
     except ValueError:
         info = ''
-        if line in ('PLANET',):
+        if line in ('PLANET', 'STAR'):
             info += ' (a closing END statement may be missing)'
         else:
             info += ' (an argument declaration is probably mistyped)'

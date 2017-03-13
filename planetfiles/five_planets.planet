@@ -5,6 +5,13 @@ PLANET
     mass: 3e-5
 END
 
+PLANET
+    name: Mars
+    pos: (0, 1.5)
+    vel: (.6, 0)
+    mass: 2e-5
+END
+
 STAR
     name: Sun
     pos: (0, 0)

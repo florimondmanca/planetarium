@@ -35,7 +35,7 @@ class Gui:
                 self.screen,
                 guiconfig.COLORS.GREEN,
                 screen_coords(body.pos),
-                screen_coords(body.pos + body.forces),
+                screen_coords(body.pos + 1e3 * body.prev_forces),
             )
         pygame.display.flip()
 

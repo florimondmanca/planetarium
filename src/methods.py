@@ -47,6 +47,7 @@ class Verlet(IntegrationMethod):
     def system_method(system, dt):
         system.integrate(dt, Verlet.body_method_pos)
         system.new_state()
+        system.apply_gravity()
         system.integrate(dt, Verlet.body_method_vel)
 
 
