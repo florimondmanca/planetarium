@@ -1,17 +1,7 @@
 import unittest
-
-from random import random
 import math
+from tests.utils import randvec, randscalar, repeat
 from src.utils import Vector2
-
-
-def randscalar():
-    # between -5 and 5
-    return -5 + 10 * random()
-
-
-def randvec():
-    return Vector2(randscalar(), randscalar())
 
 
 def vector_amplitude(vec):
@@ -20,15 +10,6 @@ def vector_amplitude(vec):
 
 def non_vector():
     return randscalar(), 'hello', True, [2, 3]
-
-
-def repeat(times=10):
-    def decorate(test_func):
-        def new_test_func(*args, **kwargs):
-            for _ in range(times):
-                test_func(*args, **kwargs)
-        return new_test_func
-    return decorate
 
 
 class TestVector2(unittest.TestCase):

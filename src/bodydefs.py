@@ -45,12 +45,19 @@ class Body:
             self.vel = vel
             self.forces = forces
 
+        def __str__(self):
+            return "State({}, {}, {})".format(self.pos, self.vel, self.forces)
+
+        def __repr__(self):
+            return "<State: {}, {}, {}>".format(self.pos, self.vel,
+                                                self.forces)
+
     def __init__(self, name, pos, vel, mass):
         self.name = name
         self.states = deque(maxlen=3)  # remember a few past states
         pos = utils.Vector2.from_pair(pos)
         vel = utils.Vector2.from_pair(vel)
-        self.states.appendleft(Body.State(pos, vel, utils.Vector2()))
+        self.states.append(Body.State(pos, vel, utils.Vector2()))
         self.mass = mass
         self.inv_mass = 1 / mass
 
@@ -94,7 +101,7 @@ class Body:
         return self.states[-2].forces
 
     def new_state(self):
-        self.states.appendleft(Body.State(self.pos, self.vel, utils.Vector2()))
+        self.states.append(Body.State(self.pos, self.vel, utils.Vector2()))
 
     def apply_gravity_of(self, body):
         """Applies another body's gravitational force to this body."""

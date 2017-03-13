@@ -5,7 +5,7 @@ class Vector2:
     EPS = 1e-10  # numerical zero
 
     def __init__(self, x=0., y=0.):
-        self._data = np.array([x, y])
+        self._data = np.array([x, y], dtype=np.float)
 
     # Get and set x, y
 
@@ -105,7 +105,7 @@ class Vector2:
         return Vector2(pair[0], pair[1])
 
     def __str__(self):
-        return "<Vector2 {}, {}>".format(self.x, self.y)
+        return "<Vector2: {}, {}>".format(self.x, self.y)
 
     def __repr__(self):
         return self.__str__()

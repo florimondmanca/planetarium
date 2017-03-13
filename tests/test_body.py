@@ -22,21 +22,39 @@ class TestBody(unittest.TestCase):
 
     def test_create_new_state(self):
         planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
+        planet.forces = (4, 2)
         self.assertEqual(len(planet.states), 1)
         planet.new_state()
+        planet.forces = (5, 3)
         self.assertEqual(len(planet.states), 2)
-        self.assertEqual(planet.pos, planet.prev_pos)
-        self.assertEqual(planet.vel, planet.prev_vel)
+        self.assertEqual(planet.states[-2].pos, (1, 2))
+        self.assertEqual(planet.states[-2].vel, (3, 4))
+        self.assertEqual(planet.states[-2].forces, (4, 2))
+        self.assertEqual(planet.states[-1].pos, (1, 2))
+        self.assertEqual(planet.states[-1].vel, (3, 4))
+        self.assertEqual(planet.states[-1].forces, (5, 3))
 
-    def test_access_previous_properties(self):
+    def test_access_previous_pos(self):
         planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
         planet.new_state()
-        planet.pos = (5, 6)
-        planet.vel = (7, 8)
-        self.assertEqual(planet.pos, (5, 6))
+        planet.pos = (4, 2)
+        self.assertEqual(planet.pos, (4, 2))
         self.assertEqual(planet.prev_pos, (1, 2))
-        self.assertEqual(planet.vel, (7, 8))
+
+    def test_access_previous_vel(self):
+        planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
+        planet.new_state()
+        planet.vel = (4, 2)
+        self.assertEqual(planet.vel, (4, 2))
         self.assertEqual(planet.prev_vel, (3, 4))
+
+    def test_access_previous_forces(self):
+        planet = bodydefs.Planet('Sun', (1, 2), (3, 4), 1)
+        planet.forces = (0, 2)
+        planet.new_state()
+        planet.forces = (4, -1)
+        self.assertEqual(planet.forces, (4, -1))
+        self.assertEqual(planet.prev_forces, (0, 2))
 
     def test_equality_between_bodies(self):
         p1 = bodydefs.Planet('Earth', (0, 0), (0, 0), 1)
