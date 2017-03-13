@@ -66,14 +66,15 @@ def parse_args(line):
             info += ' (a closing END statement may be missing)'
         else:
             info += ' (an argument declaration is probably mistyped)'
-        raise ValueError('Could not parse line "{}"'.format(line) +
-                         info)
+        raise SyntaxError('Could not parse line "{}"'.format(line) +
+                          info)
     arg_name = arg_name.strip()
     value = value.strip()
     try:
         arg_type = ARG_TYPES[arg_name]
     except KeyError:
-        raise KeyError('Unknown argument for body creation ' + str(arg_name))
+        raise TypeError('Unknown argument for body creation: ' +
+                        str(arg_name))
     return arg_name, arg_type(value)
 
 
@@ -98,10 +99,10 @@ class Creator:
     def __exit__(self, *args):
         if any(value is None for value in self.args.values()):
             missing = (arg for arg in self.args if self.args[arg] is None)
-            message = self.body_cls.__name__
-            message += ' misses the following arguments: '
+            message = 'Following arguments are missing to create '
+            message += self.body_cls.__name__ + ':'
             message += ' '.join(missing)
-            raise ImportError(message)
+            raise ValueError(message)
         self.bodies.append(self.body_cls(**self.args))
 
 
@@ -116,4 +117,4 @@ def get_creator(body_type):
     try:
         return type_to_class[body_type]
     except KeyError:
-        raise KeyError('Unknown creator type: ' + str(body_type))
+        raise SyntaxError('Unknown creator type: ' + str(body_type))

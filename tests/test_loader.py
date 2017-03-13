@@ -28,7 +28,7 @@ class TestLoader(unittest.TestCase):
         sun = Planet('Sun', (1, 2), (-3, 2), 1)
         self.assertEqual(sun, bodies[0])
 
-    def test_parse_args(self):
+    def test_parse_valid_args(self):
         data = [
             ('pos: 34', 'pos', 34),
             ('name: Sun', 'name', 'Sun'),
@@ -41,7 +41,7 @@ class TestLoader(unittest.TestCase):
             self.assertEqual(arg_name, exp_arg_name)
             self.assertEqual(value, exp_value)
 
-    def test_parse_invalid_args_raises_exception(self):
+    def test_parse_unknown_args_raises_exception(self):
         data = [
             ('posa: 34', 'pos', 34),
             ('namex: Sun', 'name', 'Sun'),
@@ -50,10 +50,19 @@ class TestLoader(unittest.TestCase):
             ('mass1: 1.43', 'mass', 1.43),
         ]
         for line, exp_arg_name, exp_value in data:
-            with self.assertRaises(KeyError):
+            with self.assertRaises(TypeError):
                 loader.parse_args(line)
 
-    def test_parse_mistyped_arg_declaration_raises_exception(self):
+    def test_load_missing_arg_raises_exception(self):
+        with self.assertRaises(ValueError) as cm:
+            with loader.get_creator('Planet')([]) as creator:
+                creator.set('name', 'Sun')
+                creator.set('pos', (0, 2))
+                # vel missing
+                creator.set('mass', 1)
+        self.assertIn("missing", str(cm.exception))
+
+    def test_parse_mistyped_declaration_raises_exception(self):
         data = [
             ('pos, 34', 'pos', 34),
             ('name=Sun', 'name', 'Sun'),
@@ -61,12 +70,12 @@ class TestLoader(unittest.TestCase):
             ('mass -> 1.43', 'mass', 1.43),
         ]
         for line, exp_arg_name, exp_value in data:
-            with self.assertRaises(ValueError) as cm:
+            with self.assertRaises(SyntaxError) as cm:
                 loader.parse_args(line)
             self.assertIn("mistyped", str(cm.exception),
                           "insufficient exception cause information")
 
-    def test_parse_and_missing_end_raises_exception(self):
+    def test_load_missing_end_raises_exception(self):
         lines = loader.Lines([
             "PLANET",
             "name: Sun",
@@ -75,7 +84,7 @@ class TestLoader(unittest.TestCase):
             "mass: 1",
             "PLANET",
         ])
-        with self.assertRaises(ValueError) as cm:
+        with self.assertRaises(SyntaxError) as cm:
             loader.load_from_lines_object(lines)
         self.assertIn("END statement", str(cm.exception),
                       "insufficient exception cause information")
