@@ -23,7 +23,7 @@ class System:
                                 .format(body.__class__.__name__, body))
         self.bodies = list(bodies)
         self.method = methods.get(method)
-        self.dt = dt  # TODO: put it as parameter in .planet file
+        self.dt = dt
 
     def new_state(self):
         for body in self.bodies:

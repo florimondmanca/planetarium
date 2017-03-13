@@ -21,6 +21,34 @@ def readfile(planetfilename):
 
 
 class Lines:
+    """
+    Iterator that allows easier management of .planet files
+    A for loop on this iterator will stop every time an 'END' statement
+    is encountered in the .planet files
+
+    Consider the following .planet file:
+        PLANET              (A)
+            name: Earth     |
+            pos: (1, 0)     | (2)
+            vel: (0, .5)    |
+            mass: 3e-5      |
+        END
+
+        STAR                (C)
+            name: Sun       |
+            pos: (0, 0)     | (2)
+            vel: (0, 0)     |
+            mass: 1         |
+        END
+
+    and the following code snippet:
+
+    for line in lines:  # print line (A) at first iteration, (B) at second
+        print(line)
+        for inner in lines:  # print (1) at first iteration, (2) at second
+            print(inner)
+
+    """
 
     def __init__(self, lines):
         self.lines = lines
@@ -43,9 +71,31 @@ class Lines:
             return line
 
 
-def load(planetfilename):
-    lines = readfile(planetfilename)
-    return load_from_lines_object(lines)
+def parse_arg_and_value(line):
+    try:
+        arg_name, value = line.split(':')
+        return arg_name.strip(), value.strip()
+    except ValueError:
+        info = ''
+        if line in ('PLANET', 'STAR'):
+            info += ' (a closing END statement may be missing)'
+        else:
+            info += ' (an argument declaration is probably mistyped)'
+        raise SyntaxError('Could not parse line "{}"'.format(line) +
+                          info)
+
+
+def get_arg_type(arg_name):
+    try:
+        return ARG_TYPES[arg_name]
+    except KeyError:
+        raise TypeError('Unknown argument: ' + str(arg_name))
+
+
+def parse_args(line):
+    arg_name, value = parse_arg_and_value(line)
+    arg_type = get_arg_type(arg_name)
+    return arg_name, arg_type(value)
 
 
 def load_from_lines_object(lines):
@@ -62,24 +112,22 @@ def load_from_lines_object(lines):
     return result
 
 
-def parse_args(line):
-    try:
-        arg_name, value = line.split(':')
-    except ValueError:
-        info = ''
-        if line in ('PLANET', 'STAR'):
-            info += ' (a closing END statement may be missing)'
-        else:
-            info += ' (an argument declaration is probably mistyped)'
-        raise SyntaxError('Could not parse line "{}"'.format(line) +
-                          info)
-    arg_name = arg_name.strip()
-    value = value.strip()
-    try:
-        arg_type = ARG_TYPES[arg_name]
-    except KeyError:
-        raise TypeError('Unknown argument: ' + str(arg_name))
-    return arg_name, arg_type(value)
+def load(planetfilename):
+    """
+    Parameters
+    ----------
+    planetfilename : str
+        Name of a .planet file
+
+    Returns
+    -------
+    result : dict
+        A mapping of the .planet file data.
+        'bodies' : a list of the constructed Body objects
+        'config': configuration data for the System
+    """
+    lines = readfile(planetfilename)
+    return load_from_lines_object(lines)
 
 
 class Creator:
@@ -88,16 +136,19 @@ class Creator:
     It is used to construct an object with certain arguments.
     Set its arguments inside a 'with' statement, then get the
     result of the construction with get().
+    The creator's result is a mapping (name of data bunch -> function
+    to access or update it).
     If an argument is left non-assigned after the construction, a
     ValueError will be raised.
 
-    Usage
+    Example usage
     -----
     with Creator() as creator:
         creator.set('foo', baz)
         creator.set('foo2', bush)
         ...
     result = creator.get()
+    bodies = result['bodies']()
 
     Subclass this base class to customize arguments.
     """
