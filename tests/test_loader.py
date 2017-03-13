@@ -17,18 +17,21 @@ class TestLoader(unittest.TestCase):
     def test_get_creator(self):
         type_to_class = {
             'Planet': loader.PlanetCreator,
+            'Star': loader.StarCreator,
+            'System': loader.SystemCreator,
         }
         for bodytype in type_to_class:
             creator = loader.get_creator(bodytype)
-            self.assertEqual(creator, type_to_class[bodytype])
+            self.assertIsInstance(creator, type_to_class[bodytype])
 
     def test_creator_set_method(self):
-        bodies = []
-        with loader.PlanetCreator({}, bodies) as creator:
+        with loader.get_creator('Planet') as creator:
             creator.set('pos', (1, 2))
             creator.set('vel', (-3, 2))
             creator.set('name', 'Sun')
             creator.set('mass', 1)
+        result = creator.get()
+        bodies = result['bodies']()
         sun = Planet('Sun', (1, 2), (-3, 2), 1)
         self.assertEqual(sun, bodies[0])
 
@@ -59,7 +62,7 @@ class TestLoader(unittest.TestCase):
 
     def test_load_missing_arg_raises_exception(self):
         with self.assertRaises(ValueError) as cm:
-            with loader.get_creator('Planet')({}, []) as creator:
+            with loader.get_creator('Planet') as creator:
                 creator.set('name', 'Sun')
                 creator.set('pos', (0, 2))
                 # vel missing
@@ -94,13 +97,15 @@ class TestLoader(unittest.TestCase):
                       "insufficient exception cause information")
 
     def test_load_one_planet(self):
-        bodies = loader.load('planetfiles/test_create_one_planet.planet')
+        result = loader.load('planetfiles/test_create_one_planet.planet')
+        bodies = result['bodies']
         self.assertEqual(len(bodies), 1)
         planet = bodies[0]
         self.assertEqual(planet, Planet('Sun', (0, 2), (3, 1), 1))
 
     def test_load_multiple_planets(self):
-        bodies = loader.load('planetfiles/test_create_n_planets.planet')
+        result = loader.load('planetfiles/test_create_n_planets.planet')
+        bodies = result['bodies']
         self.assertEqual(len(bodies), 3)
         p1, p2, p3 = bodies
         self.assertEqual(p1, Planet('Sun', (0, 2), (3, 1), 1))

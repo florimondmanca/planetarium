@@ -49,14 +49,17 @@ def load(planetfilename):
 
 
 def load_from_lines_object(lines):
-    system_config, bodies = {}, []
+    result = {'bodies': [], 'config': {}}
     for header in lines:  # will stop when finding an 'END' header or EOF
         header = header.capitalize()
-        with get_creator(header)(system_config, bodies) as creator:
+        with get_creator(header) as creator:
             for line in lines:  # will stop when finding the next 'END'
                 arg_name, value = parse_args(line)
                 creator.set(arg_name, value)
-    return system_config, bodies
+        partial_result = creator.get()
+        for key, func in partial_result.items():
+            result[key] = func(result.get(key))
+    return result
 
 
 def parse_args(line):
@@ -80,11 +83,27 @@ def parse_args(line):
 
 
 class Creator:
-    args = {}
+    """
+    A Creator is a context manager.
+    It is used to construct an object with certain arguments.
+    Set its arguments inside a 'with' statement, then get the
+    result of the construction with get().
+    If an argument is left non-assigned after the construction, a
+    ValueError will be raised.
 
-    def __init__(self, system_config, bodies):
-        self.system_config = system_config
-        self.bodies = bodies
+    Usage
+    -----
+    with Creator() as creator:
+        creator.set('foo', baz)
+        creator.set('foo2', bush)
+        ...
+    result = creator.get()
+
+    Subclass this base class to customize arguments.
+    """
+
+    def __init__(self):
+        self.args = {}
 
     def __enter__(self):
         return self
@@ -92,28 +111,58 @@ class Creator:
     def set(self, arg_name, value):
         self.args[arg_name] = value
 
-    def __exit__(self):
-        pass
+    def __exit__(self, *args):
+        if any(value is None for value in self.args.values()):
+            message = self._make_missing_message()
+            raise ValueError(message)
+
+    def _make_missing_message(self):
+        return ''
+
+    @property
+    def missing_args(self):
+        return (arg for arg in self.args if self.args[arg] is None)
+
+    def get(self):
+        return {}
 
 
 class BodyCreator(Creator):
+    """
+    Result content
+    --------------
+    system_config : dict
+    bodies : list of Body
+    """
     body_cls = None
-    args = {
-        'name': None,
-        'pos': None,
-        'vel': None,
-        'mass': None,
-    }
+
+    def __init__(self):
+        super().__init__()
+        self.body = None
+        self.args = {
+            'name': None,
+            'pos': None,
+            'vel': None,
+            'mass': None,
+        }
 
     def __exit__(self, *args):
-        if any(value is None for value in self.args.values()):
-            missing = (arg for arg in self.args if self.args[arg] is None)
-            message = 'Following arguments are missing to create '
-            message += self.body_cls.__name__ + ':'
-            message += ' '.join(missing)
-            raise ValueError(message)
-        body = self.body_cls(**self.args)
-        self.bodies.append(body)
+        super().__exit__(*args)
+        self.body = self.body_cls(**self.args)
+
+    def _make_missing_message(self):
+        message = 'Following arguments are missing to create '
+        message += self.body_cls.__name__ + ':'
+        message += ' '.join(self.missing_args)
+        return message
+
+    def get(self):
+        def func(bodies=None):
+            if bodies is None:
+                bodies = []
+            bodies.append(self.body)
+            return bodies
+        return {'bodies': func}
 
 
 class PlanetCreator(BodyCreator):
@@ -125,19 +174,32 @@ class StarCreator(BodyCreator):
 
 
 class SystemCreator(Creator):
-    args = {
-        'dt': None,
-        'method': None,
-    }
+
+    def __init__(self):
+        super().__init__()
+        self.config = {}
+        self.args = {
+            'dt': None,
+            'method': None,
+        }
 
     def __exit__(self, *args):
-        if any(value is None for value in self.args.values()):
-            missing = (arg for arg in self.args if self.args[arg] is None)
-            message = 'Following arguments are missing to configure System: '
-            message += ' '.join(missing)
-            raise ValueError(message)
-        for arg, val in self.args:
-            self.system_config[arg] = val
+        super().__exit__(*args)
+        for arg, val in self.args.items():
+            self.config[arg] = val
+
+    def _make_missing_message(self):
+        message = 'Following arguments are missing to create System: '
+        message += ' '.join(self.missing_args)
+        return message
+
+    def get(self):
+        def func(config=None):
+            if config is None:
+                config = {}
+            config.update(self.config)
+            return config
+        return {'config': func}
 
 
 def get_creator(header):
@@ -147,6 +209,6 @@ def get_creator(header):
         'System': SystemCreator,
     }
     try:
-        return type_to_class[header]
+        return type_to_class[header]()
     except KeyError:
         raise SyntaxError('Unknown creator type: ' + str(header))

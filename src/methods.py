@@ -51,6 +51,15 @@ class Verlet(IntegrationMethod):
         system.integrate(dt, Verlet.body_method_vel)
 
 
+def get(method_str):
+    if method_str == 'Euler':
+        return Euler
+    elif method_str == 'Verlet':
+        return Verlet
+    else:
+        raise ValueError('Unknown integration method:', method_str)
+
+
 def spring_test_euler():
     # test with a spring: F = -kx
     # parameters
