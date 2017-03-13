@@ -110,9 +110,14 @@ class PlanetCreator(Creator):
     body_cls = bodydefs.Planet
 
 
+class StarCreator(Creator):
+    body_cls = bodydefs.Star
+
+
 def get_creator(body_type):
     type_to_class = {
         'Planet': PlanetCreator,
+        'Star': StarCreator,
     }
     try:
         return type_to_class[body_type]

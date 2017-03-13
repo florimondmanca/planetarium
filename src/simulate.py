@@ -15,9 +15,8 @@ class System:
     ----------
     bodies : list of Body
     """
-    dt = 1e-3
 
-    def __init__(self, *bodies):
+    def __init__(self, bodies):
         for body in bodies:
             if not isinstance(body, bodydefs.Body):
                 raise TypeError('Expected Body, got {}: {}'
@@ -31,16 +30,16 @@ class System:
     def apply_gravity(self):
         for body in self.bodies:
             for other in self.others(body):
-                body.apply_gravity(other)
+                body.apply_gravity_of(other)
 
     def others(self, current_body):
         for body in self.bodies:
             if body != current_body:
                 yield body
 
-    def integrate(self, body_method):
+    def integrate(self, dt, body_method):
         for body in self.bodies:
-            body.integrate(System.dt, method=body_method)
+            body.integrate(dt, method=body_method)
 
     def update(self, dt, system_method):
         self.apply_gravity()

@@ -23,7 +23,7 @@ def body_euler(body, dt):
 
 
 def euler(system, dt):
-    system.integrate(body_method=body_euler)
+    system.integrate(dt, body_method=body_euler)
 
 
 def body_verlet_pos(body, dt):
@@ -41,9 +41,9 @@ def body_verlet_vel(body, dt):
 
 
 def verlet(system, dt):
-    system.integrate(body_method=body_verlet_pos)
+    system.integrate(dt, body_method=body_verlet_pos)
     system.new_state()
-    system.integrate(body_method=body_verlet_vel)
+    system.integrate(dt, body_method=body_verlet_vel)
 
 
 def spring_test(method=euler_raw):

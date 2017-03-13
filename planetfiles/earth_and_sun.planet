@@ -1,0 +1,13 @@
+PLANET
+    name: Earth
+    pos: (1, 0)
+    vel: (6.28, 0)
+    mass: 3e-5
+END
+
+STAR
+    name: Sun
+    pos: (0, 0)
+    vel: (0, 0)
+    mass: 1
+END
