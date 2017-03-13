@@ -22,8 +22,20 @@ class Gui:
             pygame.draw.circle(
                 self.screen,
                 self.colors[body.name],
-                screen_coords(body),
+                screen_coords(body.pos),
                 screen_radius(body),
+            )
+            pygame.draw.line(
+                self.screen,
+                guiconfig.COLORS.RED,
+                screen_coords(body.pos),
+                screen_coords(body.pos + body.vel),
+            )
+            pygame.draw.line(
+                self.screen,
+                guiconfig.COLORS.GREEN,
+                screen_coords(body.pos),
+                screen_coords(body.pos + body.forces),
             )
         pygame.display.flip()
 
@@ -42,9 +54,9 @@ class Gui:
         return Gui(System.from_file(planetfilename))
 
 
-def screen_coords(body):
-    return (guiconfig.SCREEN.WIDTH // 2 + int(200 * body.pos.x),
-            guiconfig.SCREEN.HEIGHT // 2 + int(-200 * body.pos.y))
+def screen_coords(vec):
+    return (guiconfig.SCREEN.WIDTH // 2 + int(200 * vec.x),
+            guiconfig.SCREEN.HEIGHT // 2 + int(-200 * vec.y))
 
 
 def screen_radius(body):

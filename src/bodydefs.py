@@ -72,7 +72,10 @@ class Body:
 
     @property
     def prev_pos(self):
-        return self.states[-2].pos
+        try:
+            return self.states[-2].pos
+        except IndexError:
+            return self.pos
 
     @property
     def vel(self):
@@ -85,7 +88,10 @@ class Body:
 
     @property
     def prev_vel(self):
-        return self.states[-2].vel
+        try:
+            return self.states[-2].vel
+        except IndexError:
+            return self.vel
 
     @property
     def forces(self):
@@ -98,7 +104,10 @@ class Body:
 
     @property
     def prev_forces(self):
-        return self.states[-2].forces
+        try:
+            return self.states[-2].forces
+        except IndexError:
+            return self.forces
 
     def new_state(self):
         self.states.append(Body.State(self.pos, self.vel, utils.Vector2()))

@@ -14,6 +14,8 @@ class TIME:
 
 class COLORS:
     BLACK = pygame.Color('#000000')
+    RED = pygame.Color('#ff2222')
+    GREEN = pygame.Color('#55ff55')
 
     @staticmethod
     def random():

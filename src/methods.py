@@ -45,12 +45,9 @@ class Verlet(IntegrationMethod):
         return vt + (at + atpdt) / 2 * dt, body.pos
 
     def system_method(system, dt):
-        if system.step >= 1:
-            system.integrate(dt, Verlet.body_method_pos)
-            system.new_state()
-            system.integrate(dt, Verlet.body_method_vel)
-        else:
-            system.integrate(dt, Euler.body_method)
+        system.integrate(dt, Verlet.body_method_pos)
+        system.new_state()
+        system.integrate(dt, Verlet.body_method_vel)
 
 
 def spring_test_euler():
