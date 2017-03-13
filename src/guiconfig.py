@@ -9,7 +9,7 @@ class SCREEN:
 
 
 class TIME:
-    FPS = 30
+    FPS = 60
 
 
 class COLORS:
