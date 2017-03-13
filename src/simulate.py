@@ -16,14 +16,14 @@ class System:
     bodies : list of Body
     """
 
-    def __init__(self, bodies, integration_method=methods.Verlet):
+    def __init__(self, bodies, method=methods.Verlet, dt=0.01):
         for body in bodies:
             if not isinstance(body, bodydefs.Body):
                 raise TypeError('Expected Body, got {}: {}'
                                 .format(body.__class__.__name__, body))
         self.bodies = list(bodies)
-        self.method = integration_method
-        self.dt = .01  # TODO: put it as parameter in .planet file
+        self.method = method
+        self.dt = dt  # TODO: put it as parameter in .planet file
 
     def new_state(self):
         for body in self.bodies:
@@ -54,4 +54,5 @@ class System:
 
     @staticmethod
     def from_file(planetfilename):
-        return System(loader.load(planetfilename))
+        system_config, bodies = loader.load(planetfilename)
+        return System(bodies, **system_config)

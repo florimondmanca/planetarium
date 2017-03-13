@@ -1,3 +1,8 @@
+SYSTEM
+    method: Verlet
+    dt: 0.01
+END
+
 PLANET
     name: Earth
     pos: (1, 0)

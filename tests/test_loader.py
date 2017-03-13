@@ -24,7 +24,7 @@ class TestLoader(unittest.TestCase):
 
     def test_creator_set_method(self):
         bodies = []
-        with loader.PlanetCreator(bodies) as creator:
+        with loader.PlanetCreator({}, bodies) as creator:
             creator.set('pos', (1, 2))
             creator.set('vel', (-3, 2))
             creator.set('name', 'Sun')
@@ -59,7 +59,7 @@ class TestLoader(unittest.TestCase):
 
     def test_load_missing_arg_raises_exception(self):
         with self.assertRaises(ValueError) as cm:
-            with loader.get_creator('Planet')([]) as creator:
+            with loader.get_creator('Planet')({}, []) as creator:
                 creator.set('name', 'Sun')
                 creator.set('pos', (0, 2))
                 # vel missing
