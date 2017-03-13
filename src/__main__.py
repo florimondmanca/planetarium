@@ -1,5 +1,5 @@
-from .simulate import System
+from .gui import Gui
 
 if __name__ == '__main__':
-    s = System.from_file('planetfiles/earth_and_sun.planet')
-    s.run(.00001, 1000)
+    gui = Gui.from_file('planetfiles/earth_and_sun.planet')
+    gui.run()
