@@ -31,7 +31,7 @@ class TestLoader(unittest.TestCase):
             builder.gather('vel', (-3, 2))
             builder.gather('name', 'Sun')
             builder.gather('mass', 1)
-        result = builder.build({})
+        result = builder.build()
         bodies = result['bodies']
         sun = Planet('Sun', (1, 2), (-3, 2), 1)
         self.assertEqual(sun, bodies[0])

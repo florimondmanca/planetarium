@@ -19,9 +19,17 @@ class Builder:
         builder.gather('foo2', bush)
         ...
     result = builder.build()
-    bodies = result['bodies']()
+    bodies = result['bodies']
 
-    Subclass this base class to customize arguments.
+    When subclassing Builder:
+        You must:
+        - override _build(result) to define how the child Builder should build
+        its data into a result dictionnary (not doing so results in a
+        NotImplementedError being raised at call time)
+        You can:
+        - override __exit__() - be sure to call super()
+        - override _make_missing_message()
+
     """
 
     def __init__(self, *args):
@@ -45,17 +53,25 @@ class Builder:
     def missing_args(self):
         return (arg for arg in self.args if self.args[arg] is None)
 
-    def build(self, result):
-        return {}
+    def _build(self, result):
+        raise NotImplementedError
+
+    def build(self, result=None):
+        """
+        Builds the arguments the Builder gathered into a dictionnary.
+
+        Parameters
+        ----------
+        result : dict (optional)
+            If passed the builder will update it instead of
+            creating a new one.
+        """
+        if result is None:
+            result = {}
+        return self._build(result)
 
 
 class BodyBuilder(Builder):
-    """
-    Result content
-    --------------
-    system_config : dict
-    bodies : list of Body
-    """
     body_cls = None
 
     def __init__(self):
@@ -72,7 +88,7 @@ class BodyBuilder(Builder):
         message += ' '.join(self.missing_args)
         return message
 
-    def build(self, result):
+    def _build(self, result):
         bodies = result.get('bodies', [])
         bodies.append(self.body)
         result['bodies'] = bodies
@@ -103,7 +119,7 @@ class SystemBuilder(Builder):
         message += ' '.join(self.missing_args)
         return message
 
-    def build(self, result):
+    def _build(self, result):
         config = result.get('config', {})
         config.update(self.config)
         result['config'] = config
