@@ -81,7 +81,7 @@ class TestBody(unittest.TestCase):
         moon.apply_gravity_of(earth)
         r = moon.pos - earth.pos
         r3 = abs(r) ** 3
-        gravity = -(moon.mass * earth.mass / r3) * r
+        gravity = -40 * (moon.mass * earth.mass / r3) * r
         self.assertGreater(gravity | (earth.pos - moon.pos), 0,
                            "Gravity is not attractive!")
         self.assertEqual(moon.forces, gravity)
