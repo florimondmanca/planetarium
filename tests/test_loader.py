@@ -10,6 +10,10 @@ class TestLoader(unittest.TestCase):
         lines = loader.readfile('planetfiles/test_readfile.planet')
         self.assertEqual(len(lines), 6)
 
+    def test_read_nonexisting_file_raises_exception(self):
+        with self.assertRaises(FileNotFoundError):
+            loader.readfile('planetfiles/non_existing.planet')
+
     def test_get_creator(self):
         type_to_class = {
             'Planet': loader.PlanetCreator,

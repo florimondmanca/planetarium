@@ -1,3 +1,8 @@
+from . import loader
+from . import methods
+from . import bodydefs
+
+
 class System:
     """
     Represents a system of bodies (stars, planets, etc.).
@@ -13,6 +18,10 @@ class System:
     dt = 1e-3
 
     def __init__(self, *bodies):
+        for body in bodies:
+            if not isinstance(body, bodydefs.Body):
+                raise TypeError('Expected Body, got {}: {}'
+                                .format(body.__class__.__name__, body))
         self.bodies = list(bodies)
 
     def new_state(self):
@@ -33,7 +42,15 @@ class System:
         for body in self.bodies:
             body.integrate(System.dt, method=body_method)
 
-    def update(self, system_method):
+    def update(self, dt, system_method):
         self.apply_gravity()
-        system_method(self, System.dt)
+        system_method(self, dt)
         self.new_state()
+
+    def run(self, dt, n_steps):
+        for _ in range(n_steps):
+            self.update(dt, methods.euler)
+
+    @staticmethod
+    def from_file(planetfilename):
+        return System(loader.load(planetfilename))
