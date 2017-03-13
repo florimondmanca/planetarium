@@ -44,7 +44,7 @@ class Gui:
 
 def screen_coords(body):
     return (guiconfig.SCREEN.WIDTH // 2 + int(200 * body.pos.x),
-            guiconfig.SCREEN.HEIGHT // 2 + int(200 * body.pos.y))
+            guiconfig.SCREEN.HEIGHT // 2 + int(-200 * body.pos.y))
 
 
 def screen_radius(body):

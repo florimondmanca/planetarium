@@ -1,0 +1,13 @@
+PLANET
+    name: 'First'
+    pos: (-1, 0)
+    vel: (0, 1)
+    mass: 1
+END
+
+PLANET
+    name: 'Second'
+    pos: (1, 0)
+    vel: (0, -1)
+    mass: 1
+END

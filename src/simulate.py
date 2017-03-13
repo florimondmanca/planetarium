@@ -16,14 +16,15 @@ class System:
     bodies : list of Body
     """
 
-    def __init__(self, bodies, integration_method=methods.Euler):
+    def __init__(self, bodies, integration_method=methods.Verlet):
         for body in bodies:
             if not isinstance(body, bodydefs.Body):
                 raise TypeError('Expected Body, got {}: {}'
                                 .format(body.__class__.__name__, body))
         self.bodies = list(bodies)
         self.method = integration_method
-        self.dt = .001  # TODO: put it as parameter in .planet file
+        self.dt = .01  # TODO: put it as parameter in .planet file
+        self.step = 0
 
     def new_state(self):
         for body in self.bodies:
@@ -47,6 +48,7 @@ class System:
         self.apply_gravity()
         self.method.system_method(self, self.dt)
         self.new_state()
+        self.step += 1
 
     def run(self, n_steps):
         for _ in range(n_steps):
