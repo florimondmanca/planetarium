@@ -1,4 +1,5 @@
 from . import utils
+from . import settings
 from collections import namedtuple, deque
 
 
@@ -54,7 +55,7 @@ class Body:
 
     def __init__(self, name, pos, vel, mass):
         self.name = name
-        self.states = deque(maxlen=3)  # remember a few past states
+        self.states = deque(maxlen=settings.STATE_QUEUE_LENGTH)
         pos = utils.Vector2.from_pair(pos)
         vel = utils.Vector2.from_pair(vel)
         self.states.append(Body.State(pos, vel, utils.Vector2()))

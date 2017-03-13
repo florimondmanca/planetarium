@@ -135,4 +135,4 @@ def get_builder(header):
     try:
         return type_to_class[header]()
     except KeyError:
-        raise SyntaxError('Unknown builder type: ' + str(header))
+        raise TypeError('Unknown builder type: ' + str(header))

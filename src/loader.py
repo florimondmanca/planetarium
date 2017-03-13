@@ -1,4 +1,5 @@
 from .builders import get_builder
+from . import settings
 from ast import literal_eval as make_tuple
 
 ARG_TYPES = {
@@ -55,7 +56,7 @@ class Lines:
             raise StopIteration
         else:
             line = self.lines.pop()
-            if line == "END":
+            if line == settings.EOF:
                 raise StopIteration
             while not line:
                 line = next(self)
@@ -77,8 +78,9 @@ def parse_arg_and_value(line):
         return arg_name.strip(), value.strip()
     except ValueError:
         info = ''
-        if line in ('PLANET', 'STAR'):
-            info += ' (a closing END statement may be missing)'
+        if line in settings.HEADERS:
+            info += (' (a closing {} statement may be missing)'
+                     .format(settings.EOF))
         else:
             info += ' (an argument declaration is probably mistyped)'
         raise SyntaxError('Could not parse line "{}"'.format(line) +
@@ -99,7 +101,7 @@ def parse_args(line):
 
 
 def load_from_lines_object(lines):
-    result = {'bodies': [], 'config': {}}
+    result = settings.MAKE_RESULTS_DICT()
     for header in lines:
         header = header.capitalize()
         with get_builder(header) as builder:

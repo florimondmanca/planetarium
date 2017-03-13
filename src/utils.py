@@ -70,6 +70,8 @@ class Vector2:
             raise TypeError('Division of two Vector2 is undefined.')
         return Vector2(self.x / other, self.y / other)
 
+    # Vector specific operations: dot, cross
+
     def __or__(self, other):
         # dot product
         try:
@@ -85,6 +87,8 @@ class Vector2:
         except AttributeError:
             raise TypeError(
                 'Cannot cross non-Vector2 and Vector2: {}'.format(other))
+
+    # Misc
 
     def __abs__(self):
         return np.sqrt(self | self)
