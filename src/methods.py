@@ -9,44 +9,48 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def euler_raw(at, vt, xt, dt):
-    vtpdt = vt + at * dt
-    xtpdt = xt + vt * dt
-    return vtpdt, xtpdt
+class IntegrationMethod:
+
+    def system_method(system, dt):
+        raise NotImplementedError
 
 
-def body_euler(body, dt):
-    at = body.forces * body.inv_mass
-    xt = body.pos
-    vt = body.vel
-    return euler_raw(at, vt, xt, dt)
+class Euler(IntegrationMethod):
+
+    def raw_method(at, vt, xt, dt):
+        return vt + at * dt, xt + vt * dt
+
+    def body_method(body, dt):
+        at = body.forces * body.inv_mass
+        xt = body.pos
+        vt = body.vel
+        return vt + at * dt, xt + vt * dt
+
+    def system_method(system, dt):
+        system.integrate(dt, Euler.body_method)
 
 
-def euler(system, dt):
-    system.integrate(dt, body_method=body_euler)
+class Verlet(IntegrationMethod):
+
+    def body_pos(body, dt):
+        xt = body.pos
+        vt = body.vel
+        at = body.forces * body.inv_mass
+        return vt, xt + vt * dt + 1 / 2 * at * dt**2
+
+    def body_vel(body, dt):
+        vt = body.vel
+        at = body.prev_forces * body.inv_mass
+        atpdt = body.forces * body.inv_mass
+        return vt + (at + atpdt) / 2 * dt, body.pos
+
+    def system_method(system, dt):
+        system.integrate(dt, Verlet.body_pos)
+        system.new_state()
+        system.integrate(dt, Verlet.body_vel)
 
 
-def body_verlet_pos(body, dt):
-    xt = body.pos
-    vt = body.vel
-    at = body.forces * body.inv_mass
-    return vt, xt + vt * dt + 1 / 2 * at * dt**2
-
-
-def body_verlet_vel(body, dt):
-    vt = body.vel
-    at = body.prev_forces * body.inv_mass
-    atpdt = body.forces * body.inv_mass
-    return vt + (at + atpdt) / 2 * dt, body.pos
-
-
-def verlet(system, dt):
-    system.integrate(dt, body_method=body_verlet_pos)
-    system.new_state()
-    system.integrate(dt, body_method=body_verlet_vel)
-
-
-def spring_test(method=euler_raw):
+def spring_test(method=Euler.raw_method):
     # test with a spring: F = -kx
     # parameters
     x0, v0 = 0, 1
@@ -78,4 +82,4 @@ def spring_test(method=euler_raw):
 
 
 if __name__ == '__main__':
-    spring_test(method=euler_raw)
+    spring_test(method=Euler.raw_method)

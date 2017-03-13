@@ -16,12 +16,14 @@ class System:
     bodies : list of Body
     """
 
-    def __init__(self, bodies):
+    def __init__(self, bodies, integration_method=methods.Euler):
         for body in bodies:
             if not isinstance(body, bodydefs.Body):
                 raise TypeError('Expected Body, got {}: {}'
                                 .format(body.__class__.__name__, body))
         self.bodies = list(bodies)
+        self.method = integration_method
+        self.dt = .001  # TODO: put it as parameter in .planet file
 
     def new_state(self):
         for body in self.bodies:
@@ -37,18 +39,18 @@ class System:
             if body != current_body:
                 yield body
 
-    def integrate(self, dt, body_method):
+    def integrate(self, dt, method):
         for body in self.bodies:
-            body.integrate(dt, method=body_method)
+            body.integrate(dt, method=method)
 
-    def update(self, dt, system_method):
+    def update(self):
         self.apply_gravity()
-        system_method(self, dt)
+        self.method.system_method(self, self.dt)
         self.new_state()
 
-    def run(self, dt, n_steps):
+    def run(self, n_steps):
         for _ in range(n_steps):
-            self.update(dt, methods.euler)
+            self.update()
 
     @staticmethod
     def from_file(planetfilename):

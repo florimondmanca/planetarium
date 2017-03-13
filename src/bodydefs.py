@@ -1,5 +1,4 @@
 from . import utils
-from . import methods
 from collections import namedtuple, deque
 
 
@@ -103,7 +102,7 @@ class Body:
         r3 = abs(r)**3
         self.forces += -(self.mass * body.mass / r3) * r
 
-    def integrate(self, dt, method=methods.euler):
+    def integrate(self, dt, method):
         self.vel, self.pos = method(self, dt)
 
     def __eq__(self, other):
