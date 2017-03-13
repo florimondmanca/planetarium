@@ -1,0 +1,67 @@
+SYSTEM
+    dt: 0.01
+    method: Verlet
+END
+
+STAR
+    name: Sun
+    pos: (0, 0)
+    vel: (0, 0)
+    mass: 1
+END
+
+PLANET
+    name: Mercury
+    pos: (0.387, 0)
+    vel: (0, -10.09)
+    mass: 0.000000165
+END
+
+PLANET
+    name: Venus
+    pos: (0.723, 0)
+    vel: (0, 7.37)
+    mass: 0.000002447
+END
+
+PLANET
+    name: Earth
+    pos: (1, 0)
+    vel: (0, -6.28)
+    mass: 0.000003
+END
+
+PLANET
+    name: Mars
+    pos: (1.524, 0)
+    vel: (0, 5.09)
+    mass: 0.00000032
+END
+
+PLANET
+    name: Jupiter
+    pos: (5.21, 0)
+    vel: (0, -2.757)
+    mass: 0.000954
+END
+
+PLANET
+    name: Saturn
+    pos: (9.585, 0)
+    vel: (0, -2.04)
+    mass: 0.0002859
+END
+
+PLANET
+    name: Uranus
+    pos: (19.23, 0)
+    vel: (0, -1.437)
+    mass: 0.00004385
+END
+
+PLANET
+    name: Neptune
+    pos: (30.11, 0)
+    vel: (0, -1.147)
+    mass: 0.00005166
+END

@@ -1,8 +1,8 @@
 PLANET
     name: Earth
     pos: (1, 0)
-    vel: (0, .5)
-    mass: 3e-5
+    vel: (0, 6.28)
+    mass: 3e-6
 END
 
 STAR

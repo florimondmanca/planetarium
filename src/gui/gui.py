@@ -10,8 +10,14 @@ class Gui:
         self.screen = pygame.display.set_mode(settings.SCREEN.SIZE)
         self.clock = pygame.time.Clock()
         self.colors = {}
+        self.names = {}
         for body in self.system.bodies:
             self.colors[body.name] = settings.COLORS.random()
+        for body in self.system.bodies:
+            name_image = settings.FONT.NAME.render(
+                body.name, 1, settings.COLORS.WHITE)
+            name_rect = name_image.get_rect()
+            self.names[body.name] = (name_image, name_rect)
 
     def update(self):
         self.system.update()
@@ -29,7 +35,7 @@ class Gui:
                 self.screen,
                 settings.COLORS.RED,
                 screen_coords(body.pos),
-                screen_coords(body.pos + body.vel),
+                screen_coords(body.pos + .1 * body.vel),
             )
             pygame.draw.line(
                 self.screen,
@@ -37,6 +43,10 @@ class Gui:
                 screen_coords(body.pos),
                 screen_coords(body.pos + 1000 * body.prev_forces),
             )
+            image, rect = self.names[body.name]
+            rect.center = screen_coords(body.pos)
+            rect.move_ip(0, -screen_radius(body) - 5)
+            self.screen.blit(image, rect)
         pygame.display.flip()
 
     def run(self):
@@ -55,8 +65,8 @@ class Gui:
 
 
 def screen_coords(vec):
-    return (settings.SCREEN.WIDTH // 2 + int(200 * vec.x),
-            settings.SCREEN.HEIGHT // 2 + int(-200 * vec.y))
+    return (settings.SCREEN.WIDTH // 2 + int(50 * vec.x),
+            settings.SCREEN.HEIGHT // 2 + int(-50 * vec.y))
 
 
 def screen_radius(body):
