@@ -1,13 +1,13 @@
 PLANET
     name: 'First'
     pos: (0, -1)
-    vel: (-1, 0)
+    vel: (-.4, 0)
     mass: 1
 END
 
 PLANET
     name: 'Second'
     pos: (0, 1)
-    vel: (1, 0)
+    vel: (.4, 0)
     mass: 1
 END

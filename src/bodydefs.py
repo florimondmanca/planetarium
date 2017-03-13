@@ -114,7 +114,7 @@ class Body:
 
     def apply_gravity_of(self, body):
         """Applies another body's gravitational force to this body."""
-        r = body.pos - self.pos
+        r = self.pos - body.pos
         r3 = abs(r)**3
         self.forces += -(self.mass * body.mass / r3) * r
 
