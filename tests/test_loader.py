@@ -1,6 +1,7 @@
 import unittest
 
 import src.loader as loader
+import src.builders as builders
 from src.bodydefs import Planet
 
 
@@ -14,24 +15,24 @@ class TestLoader(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             loader.readfile('planetfiles/non_existing.planet')
 
-    def test_get_creator(self):
+    def test_get_builder(self):
         type_to_class = {
-            'Planet': loader.PlanetCreator,
-            'Star': loader.StarCreator,
-            'System': loader.SystemCreator,
+            'Planet': builders.PlanetBuilder,
+            'Star': builders.StarBuilder,
+            'System': builders.SystemBuilder,
         }
         for bodytype in type_to_class:
-            creator = loader.get_creator(bodytype)
-            self.assertIsInstance(creator, type_to_class[bodytype])
+            builder = loader.get_builder(bodytype)
+            self.assertIsInstance(builder, type_to_class[bodytype])
 
-    def test_creator_set_method(self):
-        with loader.get_creator('Planet') as creator:
-            creator.set('pos', (1, 2))
-            creator.set('vel', (-3, 2))
-            creator.set('name', 'Sun')
-            creator.set('mass', 1)
-        result = creator.get()
-        bodies = result['bodies']()
+    def test_builder_gather_method(self):
+        with loader.get_builder('Planet') as builder:
+            builder.gather('pos', (1, 2))
+            builder.gather('vel', (-3, 2))
+            builder.gather('name', 'Sun')
+            builder.gather('mass', 1)
+        result = builder.build({})
+        bodies = result['bodies']
         sun = Planet('Sun', (1, 2), (-3, 2), 1)
         self.assertEqual(sun, bodies[0])
 
@@ -62,11 +63,11 @@ class TestLoader(unittest.TestCase):
 
     def test_load_missing_arg_raises_exception(self):
         with self.assertRaises(ValueError) as cm:
-            with loader.get_creator('Planet') as creator:
-                creator.set('name', 'Sun')
-                creator.set('pos', (0, 2))
+            with loader.get_builder('Planet') as builder:
+                builder.gather('name', 'Sun')
+                builder.gather('pos', (0, 2))
                 # vel missing
-                creator.set('mass', 1)
+                builder.gather('mass', 1)
         self.assertIn("missing", str(cm.exception))
 
     def test_parse_mistyped_declaration_raises_exception(self):
