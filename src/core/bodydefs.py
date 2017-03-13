@@ -117,7 +117,7 @@ class Body:
         """Applies another body's gravitational force to this body."""
         r = self.pos - body.pos
         r3 = abs(r)**3
-        g = 40  # empirical correction
+        g = 39  # empirical correction
         self.forces += -g * (self.mass * body.mass / r3) * r
 
     def integrate(self, dt, method):
