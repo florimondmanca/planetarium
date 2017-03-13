@@ -1,7 +1,7 @@
 PLANET
     name: Earth
     pos: (1, 0)
-    vel: (6.28, 0)
+    vel: (0, 6.28)
     mass: 3e-5
 END
 

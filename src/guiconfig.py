@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class SCREEN:
@@ -13,3 +14,10 @@ class TIME:
 
 class COLORS:
     BLACK = pygame.Color('#000000')
+
+    @staticmethod
+    def random():
+        colorcode = '#'
+        for _ in range(6):
+            colorcode += random.choice('0123456789abcdef')
+        return pygame.Color(colorcode)
