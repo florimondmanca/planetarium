@@ -1,7 +1,7 @@
 import unittest
-import src.methods as methods
+import src.core.methods as methods
 from tests.utils import randscalar, randtuple
-from src.bodydefs import Body
+from src.core.bodydefs import Body
 import numpy as np
 
 

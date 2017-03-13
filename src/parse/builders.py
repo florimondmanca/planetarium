@@ -1,4 +1,4 @@
-from . import bodydefs
+from ..core import bodydefs
 
 
 class Builder:

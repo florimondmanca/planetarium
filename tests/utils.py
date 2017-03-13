@@ -1,4 +1,4 @@
-from src.utils import Vector2
+from src.core.utils import Vector2
 from random import random
 
 

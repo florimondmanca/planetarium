@@ -1,6 +1,6 @@
 import unittest
 
-import src.bodydefs as bodydefs
+import src.core.bodydefs as bodydefs
 
 
 class TestBody(unittest.TestCase):

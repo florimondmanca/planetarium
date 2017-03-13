@@ -1,7 +1,7 @@
 import unittest
 import math
 from tests.utils import randvec, randscalar, repeat
-from src.utils import Vector2
+from src.core.utils import Vector2
 
 
 def vector_amplitude(vec):

@@ -1,6 +1,6 @@
-from . import loader
 from . import methods
 from . import bodydefs
+from ..parse.loader import load
 
 
 class System:
@@ -54,5 +54,5 @@ class System:
 
     @staticmethod
     def from_file(planetfilename):
-        result = loader.load(planetfilename)
+        result = load(planetfilename)
         return System(result['bodies'], **result['config'])

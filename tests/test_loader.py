@@ -1,8 +1,8 @@
 import unittest
 
-import src.loader as loader
-import src.builders as builders
-from src.bodydefs import Planet
+import src.parse.loader as loader
+import src.parse.builders as builders
+from src.core.bodydefs import Planet
 
 
 class TestLoader(unittest.TestCase):
