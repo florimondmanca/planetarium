@@ -16,9 +16,22 @@ Multiple integration methods are available:
 - ...
 
 
-## Deriving the astronomical form of equations of motion
+## Equations
 
-### Adapting the unit system
+### Deriving the adimensional form of equations of motion
+
+#### Classical form of equations of motion for one planet
+
+Consider a system of N planets (or other bodies like stars). Label each planet with a number i, i = 1, 2, ..., N.
+The gravitational force felt by planet i can be computed like so:
+
+$(1)\ \ F_i = \sum_{j \ne i} \frac{-Gm_im_j}{r_{ij}^2}$
+
+and the second law of Newton follows:
+
+$(2)\ \ m_i \frac{dv_i}{dt} = F_i$
+
+#### Adapting the unit system
 
 To avoid dealing with very large or very small numbers and reduce numerical errors, a change in the units is necessary.
 
@@ -34,3 +47,17 @@ where:
 - yr = year
 - Ms = solar mass
 - F = arbitrary unit computed as `Ms * AU / yr^2`
+
+#### Adimensional form of equations of motion for one planet
+
+Given in such units, one can show that Newton's second law $(2)$ writes:
+
+$(2^*)\ \ m_i^* \frac{dv_i^*}{dt^*} = F_i^*$
+
+where $F_i^*$ is written as:
+
+$(1^*)\ \ F_i^* = \sum_{j \ne i} \frac{-G^*m_i^*m_j^*}{r_{ij}^*2}$
+
+## Implementation
+
+blah

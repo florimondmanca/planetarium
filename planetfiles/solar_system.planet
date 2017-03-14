@@ -1,6 +1,6 @@
 SYSTEM
     dt: 0.01
-    method: Verlet
+    method: verlet
 END
 
 STAR

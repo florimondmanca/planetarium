@@ -52,12 +52,14 @@ class Verlet(IntegrationMethod):
 
 
 def get(method_str):
-    if method_str == 'Euler':
-        return Euler
-    elif method_str == 'Verlet':
-        return Verlet
+    methods = {
+        'euler': Euler,
+        'verlet': Verlet,
+    }
+    if method_str.lower() in methods:
+        return methods[method_str]
     else:
-        raise ValueError('Unknown integration method:', method_str)
+        raise ValueError('Unknown integration method: ' + method_str)
 
 
 def spring_test_euler():

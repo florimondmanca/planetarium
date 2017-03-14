@@ -38,12 +38,12 @@ class Gui:
             #     screen_coords(body.pos),
             #     screen_coords(body.pos + .1 * body.vel),
             # )
-            # pygame.draw.line(
-            #     self.screen,
-            #     settings.COLORS.GREEN,
-            #     screen_coords(body.pos),
-            #     screen_coords(body.pos + 1000 * body.prev_forces),
-            # )
+            pygame.draw.line(
+                self.screen,
+                settings.COLORS.GREEN,
+                screen_coords(body.pos),
+                screen_coords(body.pos + 1000 * body.prev_forces),
+            )
             image, rect = self.names[body.name]
             rect.center = screen_coords(body.pos)
             rect.move_ip(0, -screen_radius(body) - 5)
@@ -67,8 +67,8 @@ class Gui:
 
 
 def screen_coords(vec):
-    return (settings.SCREEN.WIDTH // 2 + int(20 * vec.x),
-            settings.SCREEN.HEIGHT // 2 + int(-20 * vec.y))
+    return (settings.SCREEN.WIDTH // 2 + int(50 * vec.x),
+            settings.SCREEN.HEIGHT // 2 + int(-50 * vec.y))
 
 
 def screen_radius(body):
