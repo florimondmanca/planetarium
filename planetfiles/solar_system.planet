@@ -1,5 +1,5 @@
 SYSTEM
-    dt: 0.02
+    dt: 0.01
     method: Verlet
 END
 

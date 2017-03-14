@@ -12,6 +12,7 @@ class SCREEN:
 
 class TIME:
     FPS = 60
+    UPDATE_PER_FRAME = 4  # effective fps ≈ 1 / (.01 + .012 * this)
 
 
 class COLORS:

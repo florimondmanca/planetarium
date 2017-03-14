@@ -1,6 +1,7 @@
 import pygame
 from . import settings
 from ..core.simulate import System
+from time import time
 
 
 class Gui:
@@ -23,7 +24,7 @@ class Gui:
         self.system.update()
 
     def draw(self):
-        # self.screen.fill(settings.COLORS.BLACK)
+        self.screen.fill(settings.COLORS.BLACK)
         for body in self.system.bodies:
             pygame.draw.circle(
                 self.screen,
@@ -43,10 +44,10 @@ class Gui:
             #     screen_coords(body.pos),
             #     screen_coords(body.pos + 1000 * body.prev_forces),
             # )
-            # image, rect = self.names[body.name]
-            # rect.center = screen_coords(body.pos)
-            # rect.move_ip(0, -screen_radius(body) - 5)
-            # self.screen.blit(image, rect)
+            image, rect = self.names[body.name]
+            rect.center = screen_coords(body.pos)
+            rect.move_ip(0, -screen_radius(body) - 5)
+            self.screen.blit(image, rect)
         pygame.display.flip()
 
     def run(self):
@@ -56,7 +57,8 @@ class Gui:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            self.update()
+            for _ in range(settings.TIME.UPDATE_PER_FRAME):
+                self.update()
             self.draw()
 
     @staticmethod
