@@ -1,7 +1,15 @@
 import pygame
 from . import settings
 from ..core.simulate import System
-from time import time
+
+
+def screen_coords(vec):
+    return (settings.SCREEN.WIDTH // 2 + int(50 * vec.x),
+            settings.SCREEN.HEIGHT // 2 + int(-50 * vec.y))
+
+
+def screen_radius(body):
+    return int(10 * body.mass ** .1)
 
 
 class Gui:
@@ -24,30 +32,35 @@ class Gui:
         self.system.update()
 
     def draw(self):
-        self.screen.fill(settings.COLORS.BLACK)
+        if settings.SHOW.BACKGROUND:
+            self.screen.fill(settings.COLORS.BLACK)
         for body in self.system.bodies:
-            pygame.draw.circle(
-                self.screen,
-                self.colors[body.name],
-                screen_coords(body.pos),
-                screen_radius(body),
-            )
-            # pygame.draw.line(
-            #     self.screen,
-            #     settings.COLORS.RED,
-            #     screen_coords(body.pos),
-            #     screen_coords(body.pos + .1 * body.vel),
-            # )
-            pygame.draw.line(
-                self.screen,
-                settings.COLORS.GREEN,
-                screen_coords(body.pos),
-                screen_coords(body.pos + 1000 * body.prev_forces),
-            )
-            image, rect = self.names[body.name]
-            rect.center = screen_coords(body.pos)
-            rect.move_ip(0, -screen_radius(body) - 5)
-            self.screen.blit(image, rect)
+            if settings.SHOW.BODY:
+                pygame.draw.circle(
+                    self.screen,
+                    self.colors[body.name],
+                    screen_coords(body.pos),
+                    screen_radius(body),
+                )
+            if settings.SHOW.VEL:
+                pygame.draw.line(
+                    self.screen,
+                    settings.COLORS.RED,
+                    screen_coords(body.pos),
+                    screen_coords(body.pos + .1 * body.vel),
+                )
+            if settings.SHOW.FORCES:
+                pygame.draw.line(
+                    self.screen,
+                    settings.COLORS.GREEN,
+                    screen_coords(body.pos),
+                    screen_coords(body.pos + 1000 * body.prev_forces),
+                )
+            if settings.SHOW.NAMES:
+                image, rect = self.names[body.name]
+                rect.center = screen_coords(body.pos)
+                rect.move_ip(0, -screen_radius(body) - 5)
+                self.screen.blit(image, rect)
         pygame.display.flip()
 
     def run(self):
@@ -64,12 +77,3 @@ class Gui:
     @staticmethod
     def from_file(planetfilename):
         return Gui(System.from_file(planetfilename))
-
-
-def screen_coords(vec):
-    return (settings.SCREEN.WIDTH // 2 + int(50 * vec.x),
-            settings.SCREEN.HEIGHT // 2 + int(-50 * vec.y))
-
-
-def screen_radius(body):
-    return int(10 * body.mass ** .1)

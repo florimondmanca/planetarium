@@ -31,3 +31,11 @@ class COLORS:
 
 class FONT:
     NAME = pygame.font.SysFont('arial', 10)
+
+
+class SHOW:
+    BACKGROUND = True
+    BODY = True
+    NAMES = True
+    VEL = False
+    FORCES = False
