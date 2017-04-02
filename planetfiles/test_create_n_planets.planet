@@ -1,18 +1,18 @@
-PLANET
+BODY
     name: Sun
     pos: (0, 2)
     vel: (3, 1)
     mass: 1
 END
 
-PLANET
+BODY
     name: Earth
     pos: (-2, 1)
     vel: (3, 4)
     mass: 1
 END
 
-PLANET
+BODY
     name: Mars
     pos: (-5, -5)
     vel: (10, 3)

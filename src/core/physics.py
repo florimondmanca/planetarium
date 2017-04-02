@@ -2,8 +2,6 @@ import numpy as np
 from .settings import STATE_DTYPE
 from scipy.spatial.distance import pdist, squareform
 
-N_BODIES = 10
-
 
 def newemptystate(n):
     """
@@ -41,7 +39,7 @@ def gravity(state):
     d3 = squareform(pdist(p))**3
     np.fill_diagonal(d3, 1)  # not to divide by zero
     mjr3 = np.einsum('ijk, ij->ik', sep, state['mass'] / d3)
-    grav_acc = -g * mjr3
+    grav_acc = g * mjr3
     return grav_acc
 
 
@@ -74,10 +72,10 @@ def generatesim(first_state, steps):
 
 
 if __name__ == '__main__':
-    n = 10
+    n = 2
     first = newemptystate(n)
     first['pos'] = np.random.random((n, 2))
     first['mass'] = np.random.random(n)
     for s in generatesim(first, 20):
-        for p in range(1):
+        for p in range(n):
             print('Particle {}:'.format(p), s[p]['pos'])

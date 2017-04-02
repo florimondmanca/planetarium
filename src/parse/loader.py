@@ -21,12 +21,12 @@ class Lines:
     Consider the following .planet file:
         PLANET              (A)
             name: Earth     |
-            pos: (1, 0)     | (2)
+            pos: (1, 0)     | (1)
             vel: (0, .5)    |
             mass: 3e-5      |
         END
 
-        STAR                (C)
+        STAR                (B)
             name: Sun       |
             pos: (0, 0)     | (2)
             vel: (0, 0)     |
@@ -56,7 +56,7 @@ class Lines:
             raise StopIteration
         else:
             line = self.lines.pop()
-            if line == settings.EOF:
+            if line == settings.EOB:
                 raise StopIteration
             while not line:
                 line = next(self)

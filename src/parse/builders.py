@@ -1,4 +1,5 @@
-from ..core import bodydefs
+import numpy as np
+from ..core.physics import newemptystate
 
 
 class Builder:
@@ -72,35 +73,36 @@ class Builder:
 
 
 class BodyBuilder(Builder):
-    body_cls = None
 
     def __init__(self):
         super().__init__('name', 'pos', 'vel', 'mass')
-        self.body = None
+        self.name = None
+        self.data = None
 
     def __exit__(self, *args):
         super().__exit__(*args)
-        self.body = self.body_cls(**self.args)
+        self.name = self.args['name']
+        data = newemptystate(1)[0]
+        data['pos'] = np.array(self.args['pos'])
+        data['vel'] = np.array(self.args['vel'])
+        data['mass'] = self.args['mass']
+        self.data = data
 
     def _make_missing_message(self):
-        message = 'Following arguments are missing to create '
-        message += self.body_cls.__name__ + ':'
+        message = 'Following arguments are missing to create Body: '
         message += ' '.join(self.missing_args)
         return message
 
     def _build(self, result):
-        bodies = result.get('bodies', [])
-        bodies.append(self.body)
-        result['bodies'] = bodies
+        names = result['names']
+        names.append(self.name)
+        result['names'] = names
+        state = result['state']
+        if state is None:
+            state = newemptystate(0)
+        state = np.array(list(state) + [self.data])
+        result['state'] = state
         return result
-
-
-class PlanetBuilder(BodyBuilder):
-    body_cls = bodydefs.Planet
-
-
-class StarBuilder(BodyBuilder):
-    body_cls = bodydefs.Star
 
 
 class SystemBuilder(Builder):
@@ -128,8 +130,7 @@ class SystemBuilder(Builder):
 
 def get_builder(header):
     type_to_class = {
-        'Planet': PlanetBuilder,
-        'Star': StarBuilder,
+        'Body': BodyBuilder,
         'System': SystemBuilder,
     }
     try:
