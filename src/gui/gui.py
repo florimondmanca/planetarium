@@ -2,6 +2,7 @@ import pygame
 from . import settings
 from ..core.physics import update
 from ..parse.loader import load
+from time import time
 
 
 def screen_coords(vec):
@@ -97,7 +98,9 @@ class Gui:
                 if event.type == pygame.QUIT:
                     running = False
             for _ in range(settings.TIME.UPDATE_PER_FRAME):
+                t = time()
                 self.update()
+                print(time() - t)
             self.draw()
 
     @staticmethod
