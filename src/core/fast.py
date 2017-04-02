@@ -1,4 +1,5 @@
 import numpy as np
+from .settings import STATE_DTYPE
 from scipy.spatial.distance import pdist, squareform
 
 N_BODIES = 10
@@ -18,11 +19,7 @@ def newemptystate(n):
         state[1] contains n velocities
         state[2] contains n accelarations
     """
-    vectype = ('f', 2)
-    state = np.zeros((n,),
-                     dtype=[('pos', vectype), ('vel', vectype),
-                            ('acc', vectype), ('mass', 'f'),
-                            ])
+    state = np.zeros((n,), dtype=STATE_DTYPE)
     return state
 
 

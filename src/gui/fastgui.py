@@ -1,7 +1,7 @@
 import pygame
 from . import settings
 from ..core.fast import generatesim, update
-from ..parse.loader import load
+from ..fastparse.loader import load
 
 
 def screen_coords(vec):
@@ -23,14 +23,13 @@ class Gui:
         self.colors = []
         self.screen = pygame.display.set_mode(settings.SCREEN.SIZE)
         self.clock = pygame.time.Clock()
-        self.colors = []
         self.init()
 
     def init(self):
         # attach color to each body
         for body in len(self.data):
             self.colors.append(settings.COLORS.random())
-        # attach name to each body
+        # attach name image to each body
         for body in len(self.data):
             name_image = settings.FONT.NAME.render(
                 self.str_names[body], 1,
@@ -53,44 +52,41 @@ class Gui:
         self.screen.fill(settings.COLORS.BLACK)
         self.screen.blit(self.background, (0, 0))
 
-    def draw_body(self, body):
+    def draw_body(self, bidx, body):
         if not settings.DRAW.BODY:
             return
-        b = self.data[body]
         pygame.draw.circle(
             self.screen,
-            self.colors[body],
-            screen_coords(b['pos']),
-            screen_radius(b),
+            self.colors[bidx],
+            screen_coords(body['pos']),
+            screen_radius(body),
         )
 
-    def draw_vel(self, body):
+    def draw_vel(self, bidx, body):
         if not settings.DRAW.VEL:
             return
-        b = self.data[body]
         pygame.draw.line(
             self.screen,
             settings.COLORS.RED,
-            screen_coords(b['pos']),
-            screen_coords(b['pos'] + settings.ZOOM.VEL * b['vel']),
+            screen_coords(body['pos']),
+            screen_coords(body['pos'] + settings.ZOOM.VEL * body['vel']),
         )
 
-    def draw_name(self, body):
+    def draw_name(self, bidx, body):
         if not settings.DRAW.NAMES:
             return
-        b = self.data[body]
-        image, rect = self.names[body]
-        rect.center = screen_coords(b['pos'])
-        rect.move_ip(0, -screen_radius(b) - 10)
+        image, rect = self.names[bidx]
+        rect.center = screen_coords(body['pos'])
+        rect.move_ip(0, -screen_radius(body) - 10)
         self.screen.blit(image, rect)
 
     def draw(self):
         if settings.BACKGROUND.REDRAW:
             self.draw_background()
-        for body in len(self.data):
-            self.draw_body(body)
-            self.draw_vel(body)
-            self.draw_name(body)
+        for bidx, body in enumerate(self.data):
+            self.draw_body(bidx, body)
+            self.draw_vel(bidx, body)
+            self.draw_name(bidx, body)
         pygame.display.flip()
 
     def run(self):
@@ -107,3 +103,5 @@ class Gui:
     @staticmethod
     def from_file(planetfilename):
         result = load(planetfilename)
+        names, bodies = zip(*result['bodies'])
+        # config = result['config']

@@ -1,4 +1,5 @@
-from ..core import bodydefs
+import numpy as np
+from ..core.fast import newemptystate
 
 
 class Builder:
@@ -72,15 +73,20 @@ class Builder:
 
 
 class BodyBuilder(Builder):
-    body_cls = None
 
     def __init__(self):
         super().__init__('name', 'pos', 'vel', 'mass')
-        self.body = None
+        self.name = None
+        self.data = None
 
     def __exit__(self, *args):
         super().__exit__(*args)
-        self.body = self.body_cls(**self.args)
+        self.name = self.args['name']
+        data = newemptystate(1)
+        data[0]['pos'] = np.array(self.args['pos'])
+        data[0]['vel'] = np.array(self.args['vel'])
+        data[0]['mass'] = self.args['mass']
+        self.data = data
 
     def _make_missing_message(self):
         message = 'Following arguments are missing to create '
@@ -90,17 +96,9 @@ class BodyBuilder(Builder):
 
     def _build(self, result):
         bodies = result.get('bodies', [])
-        bodies.append(self.body)
+        bodies.append([self.name, self.data])
         result['bodies'] = bodies
         return result
-
-
-class PlanetBuilder(BodyBuilder):
-    body_cls = bodydefs.Planet
-
-
-class StarBuilder(BodyBuilder):
-    body_cls = bodydefs.Star
 
 
 class SystemBuilder(Builder):
@@ -128,8 +126,8 @@ class SystemBuilder(Builder):
 
 def get_builder(header):
     type_to_class = {
-        'Planet': PlanetBuilder,
-        'Star': StarBuilder,
+        'Planet': BodyBuilder,
+        'Star': BodyBuilder,
         'System': SystemBuilder,
     }
     try:

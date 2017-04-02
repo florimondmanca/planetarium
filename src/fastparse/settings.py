@@ -1,3 +1,6 @@
+from ..core.settings import STATE_DTYPE
+import numpy as np
+
 # Parser parameters
 
 BUILDER_TYPES = {'System'}
@@ -8,6 +11,7 @@ EOF = "END"
 
 def MAKE_RESULTS_DICT():
     return {
-        'bodies': [],
+        'bodynames': np.zeros((1,), dtype=STATE_DTYPE),
+        'first_state': [],
         'config': {},
     }
