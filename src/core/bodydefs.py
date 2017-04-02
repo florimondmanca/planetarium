@@ -1,6 +1,6 @@
 from . import utils
 from . import settings
-from collections import namedtuple, deque
+from collections import deque
 
 
 class Body:
